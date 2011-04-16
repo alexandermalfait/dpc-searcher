@@ -33,6 +33,8 @@ public class SearchExecutor {
 
         SearchResult result = new SearchResult();
 
+        int index = 0;
+
         for(Long sentenceId : wordsPerSentence.keySet()) {
             Word[] words = wordsPerSentence.get(sentenceId);
 
@@ -42,6 +44,11 @@ public class SearchExecutor {
                 result.addResult(sentenceId, matchingWordIndexes);
             }
 
+            index++;
+
+            if(index % 1000 == 0) {
+                logger.info("Checked sentence " + index);
+            }
         }
 
         logger.info("Found " + result.getSentenceIds().size() + " search results");
@@ -49,68 +56,8 @@ public class SearchExecutor {
         return result;
     }
 
-    private List<SearchTermUsingIds> convertSearchTermsToTermsUsingIds(List<SearchTerm> terms) {
-        List<SearchTermUsingIds> convertedTerms = new ArrayList<SearchTermUsingIds>();
 
-        for(SearchTerm term : terms) {
-            SearchTermUsingIds convertedTerm = new SearchTermUsingIds();
-
-            convertedTerm.setFirstInSentence(term.isFirstInSentence());
-            convertedTerm.setLastInSentence(term.isLastInSentence());
-            convertedTerm.setMaximumDistanceFromLastMatch(term.getMaximumDistanceFromLastMatch());
-            convertedTerm.setFlagsOrMode(term.isFlagsOrMode());
-            convertedTerm.setExcludeTerm(term.isExcludeTerm());
-
-            if(term.getWord() != null) {
-                if(term.isWordRegex()) {
-                    convertedTerm.setWordIds(database.getWordIdsUsingRegex(term.getWord()));
-                }
-                else {
-                    convertedTerm.setWordIds(new int[] { database.getWordId(term.getWord()) } );
-                }
-            }
-
-            if(term.getLemma() != null) {
-                convertedTerm.setLemmaId(database.getLemmaId(term.getLemma()));
-            }
-
-            if(term.getFlags() != null) {
-                byte[] flagIds = new byte[term.getFlags().length];
-
-                for(int f = 0; f < term.getFlags().length; f++) {
-                    flagIds[f] = database.getFlagId(term.getFlags()[f]);
-                }
-
-                convertedTerm.setFlagIds(flagIds);
-            }
-
-            if(term.getExcludeFlags() != null) {
-                byte[] flagIds = new byte[term.getExcludeFlags().length];
-
-                for(int f = 0; f < term.getExcludeFlags().length; f++) {
-                    flagIds[f] = database.getFlagId(term.getExcludeFlags()[f]);
-                }
-
-                convertedTerm.setExcludeFlagIds(flagIds);
-            }
-
-            if(term.getWordTypes() != null) {
-                byte[] wordTypeIds = new byte[term.getWordTypes().length];
-
-                for(int w = 0; w < term.getWordTypes().length; w++) {
-                    wordTypeIds[w] = database.getWordTypeId(term.getWordTypes()[w]);
-                }
-
-                convertedTerm.setWordTypeIds(wordTypeIds);
-            }
-
-            convertedTerms.add(convertedTerm);
-        }
-
-        return convertedTerms;
-    }
-
-
+    @SuppressWarnings({"AssignmentToForLoopParameter"})
     private List<Integer> matchSentence(Word[] words) {
         int lastMatchIndex = -1;
         int continueFromWordIndex = 0;
@@ -188,12 +135,17 @@ public class SearchExecutor {
                 }
             }
 
-            if(!foundMatchingWord && !searchTerm.isExcludeTerm()) {
+            /*if(!foundMatchingWord && !searchTerm.isExcludeTerm()) {
                 return null;
-            }
+            }*/
         }
 
-        return matchingWordIndexes;
+        if(matchingWordIndexes != null && matchingWordIndexes.size() == convertedSearchTerms.size()) {
+            return matchingWordIndexes;
+        }
+        else {
+            return null;
+        }
     }
 
     private boolean wordMatches(SearchTermUsingIds searchTerm, Word word) {
@@ -281,4 +233,64 @@ public class SearchExecutor {
     }
 
 
+    private List<SearchTermUsingIds> convertSearchTermsToTermsUsingIds(List<SearchTerm> terms) {
+        List<SearchTermUsingIds> convertedTerms = new ArrayList<SearchTermUsingIds>();
+
+        for(SearchTerm term : terms) {
+            SearchTermUsingIds convertedTerm = new SearchTermUsingIds();
+
+            convertedTerm.setFirstInSentence(term.isFirstInSentence());
+            convertedTerm.setLastInSentence(term.isLastInSentence());
+            convertedTerm.setMaximumDistanceFromLastMatch(term.getMaximumDistanceFromLastMatch());
+            convertedTerm.setFlagsOrMode(term.isFlagsOrMode());
+            convertedTerm.setExcludeTerm(term.isExcludeTerm());
+
+            if(term.getWord() != null) {
+                if(term.isWordRegex()) {
+                    convertedTerm.setWordIds(database.getWordIdsUsingRegex(term.getWord()));
+                }
+                else {
+                    convertedTerm.setWordIds(new int[] { database.getWordId(term.getWord()) } );
+                }
+            }
+
+            if(term.getLemma() != null) {
+                convertedTerm.setLemmaId(database.getLemmaId(term.getLemma()));
+            }
+
+            if(term.getFlags() != null) {
+                byte[] flagIds = new byte[term.getFlags().length];
+
+                for(int f = 0; f < term.getFlags().length; f++) {
+                    flagIds[f] = database.getFlagId(term.getFlags()[f]);
+                }
+
+                convertedTerm.setFlagIds(flagIds);
+            }
+
+            if(term.getExcludeFlags() != null) {
+                byte[] flagIds = new byte[term.getExcludeFlags().length];
+
+                for(int f = 0; f < term.getExcludeFlags().length; f++) {
+                    flagIds[f] = database.getFlagId(term.getExcludeFlags()[f]);
+                }
+
+                convertedTerm.setExcludeFlagIds(flagIds);
+            }
+
+            if(term.getWordTypes() != null) {
+                byte[] wordTypeIds = new byte[term.getWordTypes().length];
+
+                for(int w = 0; w < term.getWordTypes().length; w++) {
+                    wordTypeIds[w] = database.getWordTypeId(term.getWordTypes()[w]);
+                }
+
+                convertedTerm.setWordTypeIds(wordTypeIds);
+            }
+
+            convertedTerms.add(convertedTerm);
+        }
+
+        return convertedTerms;
+    }
 }
