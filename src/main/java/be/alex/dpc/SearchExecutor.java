@@ -33,8 +33,6 @@ public class SearchExecutor {
 
         SearchResult result = new SearchResult();
 
-        int index = 0;
-
         for(Long sentenceId : wordsPerSentence.keySet()) {
             Word[] words = wordsPerSentence.get(sentenceId);
 
@@ -42,12 +40,6 @@ public class SearchExecutor {
 
             if(matchingWordIndexes != null) {
                 result.addResult(sentenceId, matchingWordIndexes);
-            }
-
-            index++;
-
-            if(index % 1000 == 0) {
-                logger.info("Checked sentence " + index);
             }
         }
 
