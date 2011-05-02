@@ -6,7 +6,7 @@ public class SearchTerm {
 
     private boolean wordRegex = false;
 
-    private String lemma;
+    private String[] lemmas;
 
     private boolean firstInSentence = false;
 
@@ -32,12 +32,12 @@ public class SearchTerm {
         this.word = word;
     }
 
-    public String getLemma() {
-        return lemma;
+    public String[] getLemmas() {
+        return lemmas;
     }
 
-    public void setLemma(String lemma) {
-        this.lemma = lemma;
+    public void setLemmas(String[] lemmas) {
+        this.lemmas = lemmas;
     }
 
     public boolean isFirstInSentence() {

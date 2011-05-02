@@ -3,7 +3,7 @@ package be.alex.dpc;
 public class SearchTermUsingIds {
     private int[] wordIds;
 
-    private int lemmaId;
+    private int[] lemmaIds;
 
     private byte[] wordTypeIds;
 
@@ -29,12 +29,12 @@ public class SearchTermUsingIds {
         this.wordIds = wordIds;
     }
 
-    public int getLemmaId() {
-        return lemmaId;
+    public int[] getLemmaIds() {
+        return lemmaIds;
     }
 
-    public void setLemmaId(int lemmaId) {
-        this.lemmaId = lemmaId;
+    public void setLemmaIds(int[] lemmaIds) {
+        this.lemmaIds = lemmaIds;
     }
 
     public boolean isFirstInSentence() {

@@ -25,20 +25,7 @@ public class SearchTest {
         {
             SearchTerm term = new SearchTerm();
 
-            term.setWordTypes(new String[]{"WW"});
-            term.setFlags(new String[] { "pv" });
-
-            search.addTerm(term);
-        }
-
-        {
-            SearchTerm term = new SearchTerm();
-
-            term.setWordTypes(new String[]{"WW"});
-            term.setFlags(new String[] { "vd" });
-
-            term.setMaximumDistanceFromLastMatch(1);
-            term.setLastInSentence(true);
+            term.setLemmas(new String[]{ "hond", "kat"});
 
             search.addTerm(term);
         }
@@ -49,9 +36,9 @@ public class SearchTest {
 
         System.out.println(searchResult.getSentenceIds().size());
 
-        /*for(Long sentenceId : searchResult.getSentenceIds()) {
+        for(Long sentenceId : searchResult.getSentenceIds()) {
             System.out.println(reader.getSentenceContents(sentenceId));
             //System.out.println(searchResult.getWordIndexesForSentenceId(sentenceId));
-        }*/
+        }
     }
 }

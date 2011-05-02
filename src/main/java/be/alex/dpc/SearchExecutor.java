@@ -29,7 +29,9 @@ public class SearchExecutor {
 
         logger.info("Executing search with " + search.getTerms().size() + " terms");
 
-        convertedSearchTerms = convertSearchTermsToTermsUsingIds(search.getTerms());
+        SearchTermConvertor searchTermConvertor = new SearchTermConvertor(database);
+        
+        convertedSearchTerms = searchTermConvertor.convertSearchTermsToTermsUsingIds(search.getTerms());
 
         SearchResult result = new SearchResult();
 
@@ -58,8 +60,6 @@ public class SearchExecutor {
 
         for(int termIndex = 0; termIndex < convertedSearchTerms.size(); termIndex++) {
             SearchTermUsingIds searchTerm = convertedSearchTerms.get(termIndex);
-
-            boolean foundMatchingWord = false;
 
             for(int wordIndex = continueFromWordIndex; wordIndex < words.length; wordIndex++) {
                 Word word = words[wordIndex];
@@ -110,7 +110,6 @@ public class SearchExecutor {
 
                     lastMatchIndex = wordIndex;
                     continueFromWordIndex = wordIndex + 1;
-                    foundMatchingWord = true;
                     break;
                 }
                 else {
@@ -126,10 +125,6 @@ public class SearchExecutor {
                     }
                 }
             }
-
-            /*if(!foundMatchingWord && !searchTerm.isExcludeTerm()) {
-                return null;
-            }*/
         }
 
         if(matchingWordIndexes != null && matchingWordIndexes.size() == convertedSearchTerms.size()) {
@@ -142,22 +137,13 @@ public class SearchExecutor {
 
     private boolean wordMatches(SearchTermUsingIds searchTerm, Word word) {
         if(searchTerm.getWordIds() != null) {
-            boolean matchingWord = false;
-
-            for(int wordId : searchTerm.getWordIds()) {
-                if(word.getWordId() == wordId) {
-                    matchingWord = true;
-                    break;
-                }
-            }
-
-            if(!matchingWord) {
+            if(! IntArrays.contains(searchTerm.getWordIds(), word.getWordId())) {
                 return false;
             }
         }
 
-        if(searchTerm.getLemmaId() != 0) {
-            if(word.getLemmaId() != searchTerm.getLemmaId()) {
+        if(searchTerm.getLemmaIds() != null) {
+            if(! IntArrays.contains(searchTerm.getLemmaIds(), word.getLemmaId())) {
                 return false;
             }
         }
@@ -224,65 +210,4 @@ public class SearchExecutor {
         return true;
     }
 
-
-    private List<SearchTermUsingIds> convertSearchTermsToTermsUsingIds(List<SearchTerm> terms) {
-        List<SearchTermUsingIds> convertedTerms = new ArrayList<SearchTermUsingIds>();
-
-        for(SearchTerm term : terms) {
-            SearchTermUsingIds convertedTerm = new SearchTermUsingIds();
-
-            convertedTerm.setFirstInSentence(term.isFirstInSentence());
-            convertedTerm.setLastInSentence(term.isLastInSentence());
-            convertedTerm.setMaximumDistanceFromLastMatch(term.getMaximumDistanceFromLastMatch());
-            convertedTerm.setFlagsOrMode(term.isFlagsOrMode());
-            convertedTerm.setExcludeTerm(term.isExcludeTerm());
-
-            if(term.getWord() != null) {
-                if(term.isWordRegex()) {
-                    convertedTerm.setWordIds(database.getWordIdsUsingRegex(term.getWord()));
-                }
-                else {
-                    convertedTerm.setWordIds(new int[] { database.getWordId(term.getWord()) } );
-                }
-            }
-
-            if(term.getLemma() != null) {
-                convertedTerm.setLemmaId(database.getLemmaId(term.getLemma()));
-            }
-
-            if(term.getFlags() != null) {
-                byte[] flagIds = new byte[term.getFlags().length];
-
-                for(int f = 0; f < term.getFlags().length; f++) {
-                    flagIds[f] = database.getFlagId(term.getFlags()[f]);
-                }
-
-                convertedTerm.setFlagIds(flagIds);
-            }
-
-            if(term.getExcludeFlags() != null) {
-                byte[] flagIds = new byte[term.getExcludeFlags().length];
-
-                for(int f = 0; f < term.getExcludeFlags().length; f++) {
-                    flagIds[f] = database.getFlagId(term.getExcludeFlags()[f]);
-                }
-
-                convertedTerm.setExcludeFlagIds(flagIds);
-            }
-
-            if(term.getWordTypes() != null) {
-                byte[] wordTypeIds = new byte[term.getWordTypes().length];
-
-                for(int w = 0; w < term.getWordTypes().length; w++) {
-                    wordTypeIds[w] = database.getWordTypeId(term.getWordTypes()[w]);
-                }
-
-                convertedTerm.setWordTypeIds(wordTypeIds);
-            }
-
-            convertedTerms.add(convertedTerm);
-        }
-
-        return convertedTerms;
-    }
 }
