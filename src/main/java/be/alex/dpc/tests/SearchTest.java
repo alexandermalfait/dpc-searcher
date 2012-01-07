@@ -14,18 +14,28 @@ public class SearchTest {
 
         Search search = new Search();
 
-        /*{
+        {
             SearchTerm term = new SearchTerm();
 
-            term.setWordTypes(new String[]{ "VG" });
+            term.setLemmas(new String[]{"weten"});
 
             search.addTerm(term);
-        }*/
+        }
 
         {
             SearchTerm term = new SearchTerm();
 
-            term.setLemmas(new String[]{ "hond", "kat"});
+            //term.setLemmas(new String[] { "weten" });
+
+            search.addTerm(term);
+        }
+
+        {
+            SearchTerm term = new SearchTerm();
+
+            term.setWordTypes(new String[]{"WW"});
+
+            term.setLastInSentence(true);
 
             search.addTerm(term);
         }
