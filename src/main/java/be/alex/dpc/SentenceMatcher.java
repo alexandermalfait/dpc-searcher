@@ -53,7 +53,7 @@ public class SentenceMatcher {
                 }
 
                 if(searchTerm.isLastInSentence()) {
-                    if(!currentIsLastWord()) {
+                    if(!isLastWord(wordIndex)) {
                         continue; // go through to next word
                     }
                 }
@@ -98,7 +98,12 @@ public class SentenceMatcher {
         for(SearchTermUsingIds excludedTerm : excludedTermsSinceLastMatch) {
             for(int previousWordIndex = lastMatchIndex + 1; previousWordIndex <= untilWordIndex; previousWordIndex++) {
                 if(wordMatches(excludedTerm, words[previousWordIndex])) {
-                    if(excludedTerm.getMaximumDistanceFromLastMatch() != null) {
+                    if(excludedTerm.isLastInSentence()) {
+                        if(isLastWord(previousWordIndex)) {
+                            return true;
+                        }
+                    }
+                    else if(excludedTerm.getMaximumDistanceFromLastMatch() != null) {
                         if(excludedTerm.getMaximumDistanceFromLastMatch() >= previousWordIndex - lastMatchIndex) {
                             return true;
                         }
@@ -128,7 +133,7 @@ public class SentenceMatcher {
         return termIndex == terms.size() - 1;
     }
 
-    private boolean currentIsLastWord() {
+    private boolean isLastWord(int wordIndex) {
         // if the sentence ends with a dot (LET), allow the second-to-last word to be handled as the last word
         if(words[words.length - 1].getWordTypeId() == 6) {
             return wordIndex >= words.length - 2;
