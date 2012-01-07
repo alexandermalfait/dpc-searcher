@@ -17,25 +17,32 @@ public class SearchTest {
         {
             SearchTerm term = new SearchTerm();
 
+            term.setLemmas(new String[]{"leuk"});
+
+            search.addTerm(term);
+        }
+
+        {
+            SearchTerm term = new SearchTerm();
+
+            term.setWord("om");
+
+            search.addTerm(term);
+        }
+
+        {
+            SearchTerm term = new SearchTerm();
+
+            term.setWord("te");
+
+            search.addTerm(term);
+        }
+
+        {
+            SearchTerm term = new SearchTerm();
+
             term.setLemmas(new String[]{"weten"});
-
-            search.addTerm(term);
-        }
-
-        {
-            SearchTerm term = new SearchTerm();
-
-            //term.setLemmas(new String[] { "weten" });
-
-            search.addTerm(term);
-        }
-
-        {
-            SearchTerm term = new SearchTerm();
-
-            term.setWordTypes(new String[]{"WW"});
-
-            term.setLastInSentence(true);
+            term.setExcludeTerm(true);
 
             search.addTerm(term);
         }

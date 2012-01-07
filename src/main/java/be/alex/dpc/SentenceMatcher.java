@@ -18,6 +18,8 @@ public class SentenceMatcher {
 
     private int wordIndex;
 
+    protected List<SearchTermUsingIds> excludedTermsSinceLastMatch = new ArrayList<SearchTermUsingIds>(1);
+
     public SentenceMatcher(Word[] words, List<SearchTermUsingIds> terms) {
         this.words = words;
         this.terms = terms;
@@ -27,9 +29,22 @@ public class SentenceMatcher {
         lastMatchIndex = -1;
         continueFromWordIndex = 0;
 
+        int numNonExcludedTerms = 0;
+
+        for(SearchTermUsingIds term : terms) {
+            if(!term.isExcludeTerm()) {
+                numNonExcludedTerms++;
+            }
+        }
+
         for(termIndex = 0; termIndex < terms.size(); termIndex++) {
             SearchTermUsingIds searchTerm = terms.get(termIndex);
 
+            if(searchTerm.isExcludeTerm()) {
+                excludedTermsSinceLastMatch.add(searchTerm);
+                continue;
+            }
+            
             for(wordIndex = continueFromWordIndex; wordIndex < words.length; wordIndex++) {
                 Word word = words[wordIndex];
 
@@ -51,35 +66,66 @@ public class SentenceMatcher {
                 }
 
                 if(wordMatches(searchTerm, word)) {
-                    if(searchTerm.isExcludeTerm()) {
+                    if(haveExcludedMatchSinceLastMatch(wordIndex - 1)) {
                         return null;
                     }
-
-                    currentWordMatches();
-
-                    break;
-                }
-                else {
-                    // if we need to exclude this term, and it is the maximum distance from the previous hit,
-                    // this term is "satisfied" by not being found within the given reach, and we can advance
-                    // to the next search term (by breaking from the loop)
-                    if(searchTerm.isExcludeTerm()) {
-                        if(searchTerm.getMaximumDistanceFromLastMatch() != null) {
-                            if(getDistanceFromLastMatch() == searchTerm.getMaximumDistanceFromLastMatch()) {
-                                break;
-                            }
-                        }
+                    else {
+                        currentWordMatches();
+                        break;
                     }
                 }
             }
         }
 
-        if(matchingWordIndexes.size() == terms.size()) {
-            return matchingWordIndexes;
+        if(matchingWordIndexes.size() == numNonExcludedTerms) {
+            if(haveExcludedMatchSinceLastMatch(words.length - 1)) {
+               return null;
+            }
+            else {
+                return matchingWordIndexes;
+            }
         }
         else {
             return null;
         }
+    }
+
+    private boolean haveExcludedMatchSinceLastMatch(int untilWordIndex) {
+        if(excludedTermsSinceLastMatch.isEmpty()) {
+            return false;
+        }
+
+        for(SearchTermUsingIds excludedTerm : excludedTermsSinceLastMatch) {
+            for(int previousWordIndex = lastMatchIndex + 1; previousWordIndex <= untilWordIndex; previousWordIndex++) {
+                if(wordMatches(excludedTerm, words[previousWordIndex])) {
+                    if(excludedTerm.getMaximumDistanceFromLastMatch() != null) {
+                        if(excludedTerm.getMaximumDistanceFromLastMatch() >= previousWordIndex - lastMatchIndex) {
+                            return true;
+                        }
+                    }
+                    else {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean nextWordMatchesNextTerm() {
+        if(wordIndex < words.length - 1 && termIndex < terms.size() - 1) {
+            Word nextWord = words[wordIndex + 1];
+            SearchTermUsingIds nextTerm = terms.get(termIndex + 1);
+
+            return wordMatches(nextTerm, nextWord);
+        }
+
+        return false;
+    }
+
+    private boolean currentIsLastTerm() {
+        return termIndex == terms.size() - 1;
     }
 
     private boolean currentIsLastWord() {
@@ -97,6 +143,7 @@ public class SentenceMatcher {
 
         lastMatchIndex = wordIndex;
         continueFromWordIndex = wordIndex + 1;
+        excludedTermsSinceLastMatch.clear();
     }
 
     private int getDistanceFromLastMatch() {
