@@ -22,7 +22,7 @@ abstract class GroovySearchTest extends GroovyTestCase {
 
 	Map<String, Integer> wordStrings
 
-	Map<String, Byte> types = ["undefined": (byte) 0, "noun": (byte) 1, "verb": (byte) 11, "article": (byte) 111]
+	Map<String, Byte> types = ["undefined": (byte) 0, "noun": (byte) 1, "verb": (byte) 11, "article": (byte) 111, "dot": (byte) 6]
 
 	Map<String, Byte> flags = ["properName": (byte) 1, "pastParticiple": (byte) 11, "flag3": (byte) 111, "flag4": (byte) 112 ]
 

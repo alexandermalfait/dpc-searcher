@@ -40,7 +40,7 @@ public class RegexSearchPatternBuilder {
                 }
             }
 
-            regex = addWordMatch(regex, term);
+            regex += buildWordMatch(term);
 
             if(term.isExcludeTerm()) {
                 if(term.isLastInSentence()) {
@@ -51,6 +51,12 @@ public class RegexSearchPatternBuilder {
             }
             else {
                 if(term.isLastInSentence()) {
+                    SearchTermUsingIds dotTerm = new SearchTermUsingIds();
+                    
+                    dotTerm.setWordTypeIds(new byte[] { 6 });
+
+                    regex += "(" + buildWordMatch(dotTerm) + ")?";
+                    
                     regex += "$";
                 }
             }
@@ -60,7 +66,9 @@ public class RegexSearchPatternBuilder {
     }
 
     @SuppressWarnings({"AssignmentToMethodParameter"})
-    private String addWordMatch(String regex, SearchTermUsingIds term) {
+    private String buildWordMatch(SearchTermUsingIds term) {
+        String regex = "";
+        
         regex += WORD_DELIMITER;
         
         regex += "(\\d+" + INDEX_DELIMITER + ")";

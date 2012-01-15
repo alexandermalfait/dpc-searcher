@@ -19,32 +19,7 @@ public class SearchTest {
         {
             SearchTerm term = new SearchTerm();
 
-            term.setLemmas(new String[]{"leuk"});
-
-            search.addTerm(term);
-        }
-
-        {
-            SearchTerm term = new SearchTerm();
-
-            term.setWord("om");
-
-            search.addTerm(term);
-        }
-
-        {
-            SearchTerm term = new SearchTerm();
-
-            term.setWord("te");
-
-            search.addTerm(term);
-        }
-
-        {
-            SearchTerm term = new SearchTerm();
-
-            term.setLemmas(new String[]{"weten"});
-            term.setExcludeTerm(true);
+            term.setWord("hond");
 
             search.addTerm(term);
         }

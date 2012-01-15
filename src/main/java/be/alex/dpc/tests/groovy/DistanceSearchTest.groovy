@@ -7,8 +7,8 @@ class DistanceSearchTest extends GroovySearchTest {
 	@Test
 	public void testMaximumDistance() {
 		testSearch {
-			terms << new SearchTermUsingIds(wordIds: [ getWordId("de") ] )
-			terms << new SearchTermUsingIds(wordIds: [ getWordId("kat") ], maximumDistanceFromLastMatch: 1 )
+			terms << new SearchTermUsingIds(wordIds: [getWordId("de")])
+			terms << new SearchTermUsingIds(wordIds: [getWordId("kat")], maximumDistanceFromLastMatch: 1)
 
 			sentence(
 				true,
@@ -38,8 +38,8 @@ class DistanceSearchTest extends GroovySearchTest {
 	@Test
 	public void testMaximumDistanceWithMatchSkip() {
 		testSearch {
-			terms << new SearchTermUsingIds(wordIds: [ getWordId("de") ] )
-			terms << new SearchTermUsingIds(wordIds: [ getWordId("kat") ], maximumDistanceFromLastMatch: 1 )
+			terms << new SearchTermUsingIds(wordIds: [getWordId("de")])
+			terms << new SearchTermUsingIds(wordIds: [getWordId("kat")], maximumDistanceFromLastMatch: 1)
 
 			sentence(
 				true,
@@ -57,16 +57,16 @@ class DistanceSearchTest extends GroovySearchTest {
 	@Test
 	public void testGreediness() {
 		testSearch {
-			terms << new SearchTermUsingIds(wordTypeIds: [ types.verb ])
-			terms << new SearchTermUsingIds(wordTypeIds: [ types.verb ])
+			terms << new SearchTermUsingIds(wordTypeIds: [types.verb])
+			terms << new SearchTermUsingIds(wordTypeIds: [types.verb])
 			terms << new SearchTermUsingIds(wordTypeIds: types.values().findAll { it != types.verb }, maximumDistanceFromLastMatch: 1)
-			terms << new SearchTermUsingIds(wordTypeIds: [ types.verb ], maximumDistanceFromLastMatch: 1, lastInSentence: true)
+			terms << new SearchTermUsingIds(wordTypeIds: [types.verb], maximumDistanceFromLastMatch: 1, lastInSentence: true)
 
 			sentence(
 				true,
 				word("Maar"),
 				word("we"),
-				word("zijn",types.verb),
+				word("zijn", types.verb),
 				word("ook"),
 				word("één"),
 				word("in"),
@@ -79,6 +79,34 @@ class DistanceSearchTest extends GroovySearchTest {
 				word("doen", types.verb),
 				word("dan"),
 				word("meeleven", types.verb)
+			)
+		}
+	}
+
+	@Test
+	public void testLastInSentenceSkipsDot() {
+		testSearch {
+			terms << new SearchTermUsingIds(wordIds: [ getWordId("Ziggy") ])
+			terms << new SearchTermUsingIds(wordIds: [ getWordId("kater") ], lastInSentence: true)
+
+			sentence(
+				true,
+				word("Ziggy"), word("is"), word("een"), word("gekke"), word("kater")
+			)
+
+			sentence(
+				true,
+				word("Ziggy"), word("is"), word("een"), word("gekke"), word("kater"), word(".", types.dot)
+			)
+
+			sentence(
+				false,
+				word("Ziggy"), word("is"), word("een"), word("gekke"), word("olifant")
+			)
+
+			sentence(
+				false,
+				word("Ziggy"), word("is"), word("een"), word("gekke"), word("olifant"), word(".", types.dot)
 			)
 		}
 	}
