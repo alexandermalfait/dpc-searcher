@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -14,7 +15,7 @@ public class SearchService {
 
     private Logger logger = Logger.getLogger("SearchService");
 
-    private Map<Long, Word[]> wordsPerSentence;
+    private Map<Long, Word[]> wordsPerSentence = new HashMap<Long, Word[]>();
 
     public SearchResult runSearch(Search search) {
         SearchExecutor executor = new SearchExecutor(wordsPerSentence, search, new Database());
@@ -75,6 +76,10 @@ public class SearchService {
 
     public void readDatabase() {
         readDatabase(0);
+    }
+
+    public Map<Long, Word[]> getWordsPerSentence() {
+        return wordsPerSentence;
     }
 }
 

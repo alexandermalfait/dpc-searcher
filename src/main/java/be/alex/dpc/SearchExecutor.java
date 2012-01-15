@@ -30,6 +30,14 @@ public class SearchExecutor {
 
         List<SearchTermUsingIds> convertedSearchTerms = searchTermConvertor.convertSearchTermsToTermsUsingIds(search.getTerms());
 
+        SearchResult result = getSearchResult(convertedSearchTerms);
+
+        logger.info("Found " + result.getSentenceIds().size() + " search results");
+
+        return result;
+    }
+
+    public SearchResult getSearchResult(List<SearchTermUsingIds> convertedSearchTerms) {
         SearchResult result = new SearchResult();
 
         for(Long sentenceId : wordsPerSentence.keySet()) {
@@ -43,8 +51,6 @@ public class SearchExecutor {
                 result.addResult(sentenceId, matchingWordIndexes);
             }
         }
-
-        logger.info("Found " + result.getSentenceIds().size() + " search results");
 
         return result;
     }
