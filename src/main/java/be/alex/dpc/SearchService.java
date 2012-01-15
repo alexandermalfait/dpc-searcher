@@ -31,6 +31,8 @@ public class SearchService {
         while((line = bufferedReader.readLine()) != null) {
             lines.add(line);
         }
+
+        logger.info("Finished reading data, found " + lines.size() + " sentences, used memory: " + Util.getUsedMemoryFormatted());
     }
 }
 
