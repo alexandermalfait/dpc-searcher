@@ -53,4 +53,33 @@ class DistanceSearchTest extends GroovySearchTest {
 			)
 		}
 	}
+
+	@Test
+	public void testGreediness() {
+		testSearch {
+			terms << new SearchTermUsingIds(wordTypeIds: [ types.verb ])
+			terms << new SearchTermUsingIds(wordTypeIds: [ types.verb ])
+			terms << new SearchTermUsingIds(wordTypeIds: types.values().findAll { it != types.verb }, maximumDistanceFromLastMatch: 1)
+			terms << new SearchTermUsingIds(wordTypeIds: [ types.verb ], maximumDistanceFromLastMatch: 1, lastInSentence: true)
+
+			sentence(
+				true,
+				word("Maar"),
+				word("we"),
+				word("zijn",types.verb),
+				word("ook"),
+				word("één"),
+				word("in"),
+				word("onze"),
+				word("overtuiging"),
+				word("dat"),
+				word("we"),
+				word("meer"),
+				word("kunnen", types.verb),
+				word("doen", types.verb),
+				word("dan"),
+				word("meeleven", types.verb)
+			)
+		}
+	}
 }

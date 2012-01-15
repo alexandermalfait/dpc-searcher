@@ -6,11 +6,13 @@ import be.alex.dpc.SearchResult;
 import be.alex.dpc.SearchService;
 import be.alex.dpc.SearchTerm;
 
+import java.io.IOException;
+
 public class SearchTest {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         SearchService searcher = new SearchService();
 
-        searcher.readMemoryDump("memory.dump");
+        searcher.readData("data.txt");
 
         Search search = new Search();
 

@@ -14,11 +14,17 @@ public class SentenceMatcher {
 
     private List<Integer> matchingWordIndexes = new ArrayList<Integer>();
 
+    private List<Integer> skipWordIndexes = new ArrayList<Integer>();
+
     private int termIndex;
 
     private int wordIndex;
 
     protected List<SearchTermUsingIds> excludedTermsSinceLastMatch = new ArrayList<SearchTermUsingIds>(1);
+
+    protected int numNonExcludedTerms;
+
+    protected boolean sentenceCanPossiblyMatch;
 
     public SentenceMatcher(Word[] words, List<SearchTermUsingIds> terms) {
         this.words = words;
@@ -29,13 +35,54 @@ public class SentenceMatcher {
         lastMatchIndex = -1;
         continueFromWordIndex = 0;
 
-        int numNonExcludedTerms = 0;
+        numNonExcludedTerms = 0;
 
         for(SearchTermUsingIds term : terms) {
             if(!term.isExcludeTerm()) {
                 numNonExcludedTerms++;
             }
         }
+
+        runSearch();
+
+        return determineSearchResult();
+    }
+
+    private List<Integer> determineSearchResult() {
+        if(matchingWordIndexes.size() == numNonExcludedTerms && ! haveExcludedMatchSinceLastMatch(words.length - 1)) {
+            return matchingWordIndexes;
+        }
+        else {
+            if(sentenceCanPossiblyMatch) {
+                skipWordIndexes.clear();
+
+                for(Integer matchingWordIndex : new ArrayList<Integer>(matchingWordIndexes)) {
+                    skipWordIndexes.add(matchingWordIndex);
+
+                    runSearch();
+
+                    List<Integer> retryResult = determineSearchResult();
+
+                    if(retryResult != null) {
+                        return retryResult;
+                    }
+                }
+
+                return null;
+            }
+            else {
+                return null;
+            }
+        }
+    }
+
+    private void runSearch() {
+        sentenceCanPossiblyMatch = true;
+
+        excludedTermsSinceLastMatch.clear();
+        matchingWordIndexes.clear();
+
+        continueFromWordIndex = 0;
 
         for(termIndex = 0; termIndex < terms.size(); termIndex++) {
             SearchTermUsingIds searchTerm = terms.get(termIndex);
@@ -44,12 +91,17 @@ public class SentenceMatcher {
                 excludedTermsSinceLastMatch.add(searchTerm);
                 continue;
             }
-            
+
             for(wordIndex = continueFromWordIndex; wordIndex < words.length; wordIndex++) {
+                if(skipWordIndexes.contains(wordIndex)) {
+                    continue;
+                }
+
                 Word word = words[wordIndex];
 
                 if(searchTerm.isFirstInSentence() && wordIndex > 0) {
-                    return null;
+                    sentenceCanPossiblyMatch = false;
+                    return;
                 }
 
                 if(searchTerm.isLastInSentence()) {
@@ -59,7 +111,7 @@ public class SentenceMatcher {
                 }
 
                 if(searchTerm.getMaximumDistanceFromLastMatch() != null) {
-                    if(! haveMatch() || getDistanceFromLastMatch() > searchTerm.getMaximumDistanceFromLastMatch()) {
+                    if(!haveMatch() || getDistanceFromLastMatch() > searchTerm.getMaximumDistanceFromLastMatch()) {
                         retrySearchFromNextWord();
                         break;
                     }
@@ -67,7 +119,7 @@ public class SentenceMatcher {
 
                 if(wordMatches(searchTerm, word)) {
                     if(haveExcludedMatchSinceLastMatch(wordIndex - 1)) {
-                        return null;
+                        return;
                     }
                     else {
                         currentWordMatches();
@@ -75,18 +127,6 @@ public class SentenceMatcher {
                     }
                 }
             }
-        }
-
-        if(matchingWordIndexes.size() == numNonExcludedTerms) {
-            if(haveExcludedMatchSinceLastMatch(words.length - 1)) {
-               return null;
-            }
-            else {
-                return matchingWordIndexes;
-            }
-        }
-        else {
-            return null;
         }
     }
 
@@ -166,7 +206,7 @@ public class SentenceMatcher {
     }
 
     private boolean wordMatches(SearchTermUsingIds searchTerm, Word word) {
-        WordMatcher wordMatcher = new WordMatcher(word, searchTerm);
+        MemoryWordMatcher wordMatcher = new MemoryWordMatcher(word, searchTerm);
 
         return wordMatcher.matches();
     }

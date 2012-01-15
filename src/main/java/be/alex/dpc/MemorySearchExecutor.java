@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class SearchExecutor {
+public class MemorySearchExecutor {
     private final Map<Long, Word[]> wordsPerSentence;
 
     private final Search search;
@@ -13,7 +13,7 @@ public class SearchExecutor {
 
     private Logger logger = Logger.getLogger("SearchExecutor");
 
-    public SearchExecutor(Map<Long, Word[]> wordsPerSentence, Search search, Database database) {
+    public MemorySearchExecutor(Map<Long, Word[]> wordsPerSentence, Search search, Database database) {
         this.wordsPerSentence = wordsPerSentence;
         this.search = search;
         this.database = database;

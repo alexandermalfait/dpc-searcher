@@ -1,11 +1,11 @@
 package be.alex.dpc;
 
-public class WordMatcher {
+public class MemoryWordMatcher {
     private final Word word;
 
     private final SearchTermUsingIds searchTerm;
 
-    public WordMatcher(Word word, SearchTermUsingIds searchTerm) {
+    public MemoryWordMatcher(Word word, SearchTermUsingIds searchTerm) {
         this.word = word;
         this.searchTerm = searchTerm;
     }

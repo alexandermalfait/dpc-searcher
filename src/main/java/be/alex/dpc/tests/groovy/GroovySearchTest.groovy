@@ -1,9 +1,10 @@
 package be.alex.dpc.tests.groovy
 
-import be.alex.dpc.SearchExecutor
+import be.alex.dpc.RegexSearchExecutor
 import be.alex.dpc.SearchResult
 import be.alex.dpc.SearchTermUsingIds
 import be.alex.dpc.Word
+import be.alex.dpc.SentenceDumper
 
 abstract class GroovySearchTest extends GroovyTestCase {
 
@@ -17,11 +18,15 @@ abstract class GroovySearchTest extends GroovyTestCase {
 
 	private List<Long> expectedMatches
 
-	Map wordsPerSentence
+	Map<Long,Word[]> wordsPerSentence
 
 	Map<String, Integer> wordStrings
 
-	Map<String, Byte> types = ["undefined" : (byte) 0, "noun" : (byte) 1, "verb": (byte) 2, "article": (byte) 3, "article": (byte) 3]
+	Map<String, Byte> types = ["undefined": (byte) 0, "noun": (byte) 1, "verb": (byte) 11, "article": (byte) 111]
+
+	Map<String, Byte> flags = ["properName": (byte) 1, "pastParticiple": (byte) 11, "flag3": (byte) 111, "flag4": (byte) 112 ]
+
+	SearchResult lastResult
 
 	@Override
 	protected void setUp() {
@@ -36,13 +41,26 @@ abstract class GroovySearchTest extends GroovyTestCase {
 	protected void testSearch(Closure definition) {
 		definition.call()
 
-		SearchExecutor executor = new SearchExecutor(wordsPerSentence, null, null)
+		RegexSearchExecutor executor = new RegexSearchExecutor(dumpSentences(), null, null)
 
-		SearchResult result = executor.getSearchResult(terms)
+		lastResult = executor.getSearchResult(terms)
 
-		if(result.getSentenceIds() != expectedMatches) {
-			failWithUnexpectedSearchResult(result)
+		if(lastResult.getSentenceIds() != expectedMatches) {
+			failWithUnexpectedSearchResult(lastResult)
 		}
+	}
+
+	private List<String> dumpSentences() {
+		StringWriter writer = new StringWriter()
+		SentenceDumper dumper = new SentenceDumper()
+
+		wordsPerSentence.each { long sentenceId, Word[] words ->
+			dumper.dumpSentence(sentenceId, words, writer)
+		}
+
+		log.info("Dumped: " + writer.toString())
+
+		return writer.toString().split("\n")
 	}
 
 	private def failWithUnexpectedSearchResult(SearchResult result) {
@@ -62,7 +80,8 @@ abstract class GroovySearchTest extends GroovyTestCase {
 			expectedMatches.each { sentenceId ->
 				message += "- ${formatSentence(sentenceId)}\n"
 			}
-		} else {
+		}
+		else {
 			message += "NONE"
 		}
 
@@ -74,7 +93,8 @@ abstract class GroovySearchTest extends GroovyTestCase {
 			result.getSentenceIds().each { sentenceId ->
 				message += "- ${formatSentence(sentenceId)}\n"
 			}
-		} else {
+		}
+		else {
 			message += "NONE"
 		}
 
@@ -91,7 +111,7 @@ abstract class GroovySearchTest extends GroovyTestCase {
 		}
 
 		if(term.wordTypeIds) {
-			parts << "type = " + term.wordTypeIds.collect { formatType((byte)it) }.join('|')
+			parts << "type = " + term.wordTypeIds.collect { formatType((byte) it) }.join('|')
 		}
 
 		if(term.excludeTerm) {
@@ -139,8 +159,8 @@ abstract class GroovySearchTest extends GroovyTestCase {
 		return sentence(shouldMatch, sentenceString.split(" ").collect { word(it) } as Word[])
 	}
 
-	Word word(String word, byte type = 0) {
-		return new Word(wordId: getWordId(word), wordTypeId: type)
+	Word word(String word, byte type = 0, byte... flags) {
+		return new Word(wordId: getWordId(word), wordTypeId: type, flags: flags)
 	}
 
 	def getWordId(String word) {
