@@ -34,7 +34,7 @@ public class RegexSearchPatternBuilder {
                 }
                 else {
                     if(!term.isFirstInSentence()) {
-                        regex += ".*";
+                        regex += ".*?";
                     }
                 }
             }
@@ -87,7 +87,7 @@ public class RegexSearchPatternBuilder {
         }
 
         if(term.getWordTypeIds() != null) {
-            regex += "(" + Joiner.on('|').join(appendToAll(Bytes.asList(term.getWordTypeIds()), FIELD_DELIMITER)) + ")";
+            regex += "(" + Joiner.on('|').join(Bytes.asList(term.getWordTypeIds())) + ")" + FIELD_DELIMITER;
         }
         else {
             regex += "\\d+" + FIELD_DELIMITER;

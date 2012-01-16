@@ -50,7 +50,7 @@ abstract class GroovySearchTest extends GroovyTestCase {
 		}
 	}
 
-	private String dumpSentences() {
+	private List<String> dumpSentences() {
 		StringWriter writer = new StringWriter()
 		SentenceDumper dumper = new SentenceDumper()
 
@@ -60,7 +60,7 @@ abstract class GroovySearchTest extends GroovyTestCase {
 
 		log.info("Dumped: " + writer.toString())
 
-		return writer.toString()
+		return writer.toString().split("\n")
 	}
 
 	private def failWithUnexpectedSearchResult(SearchResult result) {

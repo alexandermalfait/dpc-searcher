@@ -58,6 +58,12 @@
        <version>r09</version>
      </dependency>
 
+     <dependency>
+       <groupId>net.sourceforge.jregex</groupId>
+       <artifactId>jregex</artifactId>
+       <version>1.2_01</version>
+     </dependency>
+
 
    </dependencies>
 

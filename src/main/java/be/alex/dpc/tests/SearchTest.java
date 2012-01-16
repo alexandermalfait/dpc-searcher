@@ -1,6 +1,5 @@
 package be.alex.dpc.tests;
 
-import be.alex.dpc.Database;
 import be.alex.dpc.Search;
 import be.alex.dpc.SearchResult;
 import be.alex.dpc.SearchService;
@@ -18,38 +17,28 @@ public class SearchTest {
 
         {
             SearchTerm term = new SearchTerm();
-
-            term.setLemmas(new String[]{"leuk"});
-
+            term.setWordTypes(new String[]{"WW"});
             search.addTerm(term);
         }
 
         {
             SearchTerm term = new SearchTerm();
-
-            term.setWord("om");
-
+            term.setWordTypes(new String[]{"/","ADJ","BW","LET","LID","N","SPEC","TSW","TW","VG","VNW","VZ"});
             search.addTerm(term);
         }
 
         {
             SearchTerm term = new SearchTerm();
-
-            term.setWord("te");
-
+            term.setWordTypes(new String[]{"WW"});
             search.addTerm(term);
         }
 
         {
             SearchTerm term = new SearchTerm();
-
-            term.setLemmas(new String[]{"weten"});
-            term.setExcludeTerm(true);
-
+            term.setLastInSentence(true);
+            term.setWordTypes(new String[]{"WW"});
             search.addTerm(term);
         }
-
-        Database reader = new Database();
 
         SearchResult searchResult = searcher.runSearch(search);
 

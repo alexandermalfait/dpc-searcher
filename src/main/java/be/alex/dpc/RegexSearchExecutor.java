@@ -1,14 +1,16 @@
 package be.alex.dpc;
 
+import jregex.Matcher;
+import jregex.Pattern;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 public class RegexSearchExecutor {
 
-    private final String data;
+    private final List<String> lines;
 
     private final Search search;
 
@@ -16,8 +18,8 @@ public class RegexSearchExecutor {
 
     private Logger logger = Logger.getLogger("SearchExecutor");
 
-    public RegexSearchExecutor(String data, Search search, Database database) {
-        this.data = data;
+    public RegexSearchExecutor(List<String> lines, Search search, Database database) {
+        this.lines = lines;
         this.search = search;
         this.database = database;
     }
@@ -35,7 +37,7 @@ public class RegexSearchExecutor {
 
         SearchResult result = getSearchResult(convertedSearchTerms);
 
-        logger.info("Found " + result.getSentenceIds().size() + " search results");
+        logger.info("Found " + result.getSentenceIds().size() + " search results, used memory " + Util.getUsedMemoryFormatted());
 
         return result;
     }
@@ -43,28 +45,39 @@ public class RegexSearchExecutor {
     public SearchResult getSearchResult(List<SearchTermUsingIds> convertedSearchTerms) {
         SearchResult result = new SearchResult();
 
-        Pattern pattern = Pattern.compile(new RegexSearchPatternBuilder().buildPattern(convertedSearchTerms), Pattern.MULTILINE);
+        String regex = new RegexSearchPatternBuilder().buildPattern(convertedSearchTerms);
+
+        Pattern pattern = new Pattern(regex);
 
         logger.info("Searching using pattern: " + pattern);
 
-        Matcher matcher = pattern.matcher(data);
+        int offset = 0;
 
-        while(matcher.find()) {
-            Long sentenceId = Long.valueOf(matcher.group(1));
+        for(String line : lines) {
+            Matcher lineMatcher = pattern.matcher(line);
 
-            List<Integer> wordIndexes = new ArrayList<Integer>();
+            if(lineMatcher.find()) {
+                Long sentenceId = Long.valueOf(lineMatcher.group(1));
 
-            for(int groupIndex = 2; groupIndex < matcher.groupCount(); groupIndex++) {
-                String groupValue = matcher.group(groupIndex);
+                List<Integer> wordIndexes = new ArrayList<Integer>();
 
-                if(groupValue != null && groupValue.endsWith(RegexSearchPatternBuilder.INDEX_DELIMITER)) {
-                    wordIndexes.add(Integer.parseInt(groupValue.replaceAll(RegexSearchPatternBuilder.INDEX_DELIMITER, "")));
+                for(int groupIndex = 2; groupIndex < lineMatcher.groupCount(); groupIndex++) {
+                    String groupValue = lineMatcher.group(groupIndex);
+
+                    if(groupValue != null && groupValue.endsWith(RegexSearchPatternBuilder.INDEX_DELIMITER)) {
+                        wordIndexes.add(Integer.parseInt(groupValue.replaceAll(RegexSearchPatternBuilder.INDEX_DELIMITER, "")));
+                    }
                 }
+                
+                result.addResult(sentenceId, wordIndexes);
             }
 
-            result.addResult(sentenceId, wordIndexes);
-        }
+            offset++;
 
+            if(offset % 1000 == 0) {
+                logger.info("Checked line " + offset + " of " + lines.size());
+            }
+        }
 
         return result;
     }
