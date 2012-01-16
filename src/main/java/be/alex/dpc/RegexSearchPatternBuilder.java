@@ -7,7 +7,6 @@ import com.google.common.primitives.Ints;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class RegexSearchPatternBuilder {
     public static final String SENTENCE_DELIMITER = "S";
@@ -20,7 +19,7 @@ public class RegexSearchPatternBuilder {
 
     public static final String FIELD_SUB_DELIMITER = "D";
 
-    Pattern buildPattern(List<SearchTermUsingIds> terms) {
+    String buildPattern(List<SearchTermUsingIds> terms) {
         String regex = "^(\\d+)" + SENTENCE_DELIMITER;
 
         for(SearchTermUsingIds term : terms) {
@@ -62,7 +61,7 @@ public class RegexSearchPatternBuilder {
             }
         }
 
-        return Pattern.compile(regex);
+        return regex;
     }
 
     @SuppressWarnings({"AssignmentToMethodParameter"})

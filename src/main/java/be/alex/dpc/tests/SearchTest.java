@@ -19,7 +19,32 @@ public class SearchTest {
         {
             SearchTerm term = new SearchTerm();
 
-            term.setWord("hond");
+            term.setLemmas(new String[]{"leuk"});
+
+            search.addTerm(term);
+        }
+
+        {
+            SearchTerm term = new SearchTerm();
+
+            term.setWord("om");
+
+            search.addTerm(term);
+        }
+
+        {
+            SearchTerm term = new SearchTerm();
+
+            term.setWord("te");
+
+            search.addTerm(term);
+        }
+
+        {
+            SearchTerm term = new SearchTerm();
+
+            term.setLemmas(new String[]{"weten"});
+            term.setExcludeTerm(true);
 
             search.addTerm(term);
         }
@@ -31,7 +56,7 @@ public class SearchTest {
         System.out.println(searchResult.getSentenceIds().size());
 
         for(Long sentenceId : searchResult.getSentenceIds()) {
-            System.out.println(reader.getSentenceContents(sentenceId));
+            //System.out.println(reader.getSentenceContents(sentenceId));
             //System.out.println(searchResult.getWordIndexesForSentenceId(sentenceId));
         }
     }

@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class RegexSearchExecutor {
 
-    private final List<String> lines;
+    private final String data;
 
     private final Search search;
 
@@ -16,8 +16,8 @@ public class RegexSearchExecutor {
 
     private Logger logger = Logger.getLogger("SearchExecutor");
 
-    public RegexSearchExecutor(List<String> lines, Search search, Database database) {
-        this.lines = lines;
+    public RegexSearchExecutor(String data, Search search, Database database) {
+        this.data = data;
         this.search = search;
         this.database = database;
     }
@@ -43,28 +43,28 @@ public class RegexSearchExecutor {
     public SearchResult getSearchResult(List<SearchTermUsingIds> convertedSearchTerms) {
         SearchResult result = new SearchResult();
 
-        Pattern pattern = new RegexSearchPatternBuilder().buildPattern(convertedSearchTerms);
+        Pattern pattern = Pattern.compile(new RegexSearchPatternBuilder().buildPattern(convertedSearchTerms), Pattern.MULTILINE);
 
         logger.info("Searching using pattern: " + pattern);
 
-        for(String line : lines) {
-            Matcher lineMatcher = pattern.matcher(line);
-            if(lineMatcher.lookingAt()) {
-                Long sentenceId = Long.valueOf(lineMatcher.group(1));
+        Matcher matcher = pattern.matcher(data);
 
-                List<Integer> wordIndexes = new ArrayList<Integer>();
+        while(matcher.find()) {
+            Long sentenceId = Long.valueOf(matcher.group(1));
 
-                for(int groupIndex = 2; groupIndex < lineMatcher.groupCount(); groupIndex++) {
-                    String groupValue = lineMatcher.group(groupIndex);
+            List<Integer> wordIndexes = new ArrayList<Integer>();
 
-                    if(groupValue != null && groupValue.endsWith(RegexSearchPatternBuilder.INDEX_DELIMITER)) {
-                        wordIndexes.add(Integer.parseInt(groupValue.replaceAll(RegexSearchPatternBuilder.INDEX_DELIMITER, "")));
-                    }
+            for(int groupIndex = 2; groupIndex < matcher.groupCount(); groupIndex++) {
+                String groupValue = matcher.group(groupIndex);
+
+                if(groupValue != null && groupValue.endsWith(RegexSearchPatternBuilder.INDEX_DELIMITER)) {
+                    wordIndexes.add(Integer.parseInt(groupValue.replaceAll(RegexSearchPatternBuilder.INDEX_DELIMITER, "")));
                 }
-                
-                result.addResult(sentenceId, wordIndexes);
             }
+
+            result.addResult(sentenceId, wordIndexes);
         }
+
 
         return result;
     }

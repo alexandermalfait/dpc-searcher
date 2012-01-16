@@ -1,38 +1,28 @@
 package be.alex.dpc;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import com.google.common.io.Files;
+
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.charset.Charset;
 import java.util.logging.Logger;
 
 public class SearchService {
 
     private Logger logger = Logger.getLogger("SearchService");
 
-    protected List<String> lines;
+    protected String data;
 
     public SearchResult runSearch(Search search) {
-        RegexSearchExecutor executor = new RegexSearchExecutor(lines, search, new Database());
+        RegexSearchExecutor executor = new RegexSearchExecutor(data, search, new Database());
 
         return executor.getSearchResult();
     }
 
     public void readData(String fileName) throws IOException {
-        lines = new ArrayList<String>();
-
-        FileReader reader = new FileReader(fileName);
-
-        BufferedReader bufferedReader = new BufferedReader(reader);
+        data = Files.toString(new File(fileName), Charset.defaultCharset());
         
-        String line = null;
-        
-        while((line = bufferedReader.readLine()) != null) {
-            lines.add(line);
-        }
-
-        logger.info("Finished reading data, found " + lines.size() + " sentences, used memory: " + Util.getUsedMemoryFormatted());
+        logger.info("Finished reading data, " + data.length() + " characters, used memory: " + Util.getUsedMemoryFormatted());
     }
 }
 
