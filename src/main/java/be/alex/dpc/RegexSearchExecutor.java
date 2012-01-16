@@ -3,6 +3,8 @@ package be.alex.dpc;
 import jregex.Matcher;
 import jregex.Pattern;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -18,6 +20,8 @@ public class RegexSearchExecutor {
 
     private Logger logger = Logger.getLogger("SearchExecutor");
 
+    private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+    
     public RegexSearchExecutor(List<String> lines, Search search, Database database) {
         this.lines = lines;
         this.search = search;
@@ -75,10 +79,19 @@ public class RegexSearchExecutor {
             offset++;
 
             if(offset % 1000 == 0) {
-                logger.info("Checked line " + offset + " of " + lines.size());
+                reportProgress(offset);
             }
         }
 
         return result;
+    }
+
+    private void reportProgress(int offset) {
+        logger.info("Checked line " + offset + " of " + lines.size());
+        changeSupport.firePropertyChange("progress", null, offset);
+    }
+    
+    public void addPropertyChangeListener(String property, PropertyChangeListener listener) {
+        changeSupport.addPropertyChangeListener(property, listener);
     }
 }

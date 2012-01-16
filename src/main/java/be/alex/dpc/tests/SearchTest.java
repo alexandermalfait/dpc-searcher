@@ -12,6 +12,7 @@ public class SearchTest {
         SearchService searcher = new SearchService();
 
         searcher.readData("data.txt");
+        searcher.setProgressFileLocation("progress.txt");
 
         Search search = new Search();
 
