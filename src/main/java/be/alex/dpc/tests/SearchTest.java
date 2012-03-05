@@ -18,26 +18,8 @@ public class SearchTest {
 
         {
             SearchTerm term = new SearchTerm();
-            term.setWordTypes(new String[]{"WW"});
-            search.addTerm(term);
-        }
-
-        {
-            SearchTerm term = new SearchTerm();
-            term.setWordTypes(new String[]{"/","ADJ","BW","LET","LID","N","SPEC","TSW","TW","VG","VNW","VZ"});
-            search.addTerm(term);
-        }
-
-        {
-            SearchTerm term = new SearchTerm();
-            term.setWordTypes(new String[]{"WW"});
-            search.addTerm(term);
-        }
-
-        {
-            SearchTerm term = new SearchTerm();
-            term.setLastInSentence(true);
-            term.setWordTypes(new String[]{"WW"});
+            term.setWord("hond");
+            term.setFlags(new String[]{"stan"});
             search.addTerm(term);
         }
 

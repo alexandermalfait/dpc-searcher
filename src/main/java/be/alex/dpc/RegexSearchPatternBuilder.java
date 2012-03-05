@@ -98,6 +98,8 @@ public class RegexSearchPatternBuilder {
         }
         
         if(term.getFlagIds() != null) {
+            regex += "(\\d+"+ FIELD_SUB_DELIMITER + ")*";
+
             List<Byte> flagList = Bytes.asList(term.getFlagIds());
 
             Collections.sort(flagList);
@@ -111,7 +113,7 @@ public class RegexSearchPatternBuilder {
                 }
             }
         }
-        regex += "[\\d"+ FIELD_SUB_DELIMITER + "]*";
+        regex += "(\\d+"+ FIELD_SUB_DELIMITER + ")*";
 
         regex += WORD_DELIMITER;
 

@@ -22,6 +22,20 @@ class FlagsSearchTest extends GroovySearchTest {
 		}
 	}
 
+    @Test
+    public void testSecondFlagSearch() {
+        testSearch {
+            terms << new SearchTermUsingIds(flagIds: [flags.flag4], flagsOrMode: false)
+
+            sentence(
+                true,
+                word("alex", types.noun, flags.flag3, flags.flag4)
+            )
+
+            sentence(false, "Hier zitten zelfs geen flags op")
+        }
+    }
+
 	@Test
 	public void testOrFlagSearch() {
 		testSearch {
@@ -38,7 +52,7 @@ class FlagsSearchTest extends GroovySearchTest {
 
 			sentence(
 				false,
-				word("alex", types.noun, flags.flag3),
+				word("pralex", types.noun, flags.flag3),
 				word("heeft"),
 				word("lekker"),
 				word("gegeten", types.verb, flags.pastParticiple),
