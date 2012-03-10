@@ -1,6 +1,7 @@
 package be.alex.dpc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SearchTermConvertor {
@@ -65,6 +66,8 @@ public class SearchTermConvertor {
             for(int f = 0; f < term.getFlags().length; f++) {
                 flagIds[f] = database.getFlagId(term.getFlags()[f]);
             }
+
+            Arrays.sort(flagIds);
 
             convertedTerm.setFlagIds(flagIds);
         }

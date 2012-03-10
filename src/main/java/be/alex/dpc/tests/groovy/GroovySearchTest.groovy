@@ -22,9 +22,16 @@ abstract class GroovySearchTest extends GroovyTestCase {
 
 	Map<String, Integer> wordStrings
 
-	Map<String, Byte> types = ["undefined": (byte) 0, "noun": (byte) 1, "verb": (byte) 11, "article": (byte) 111, "dot": (byte) 6]
+	Map<String, Byte> types = [
+        "undefined": (byte) 0, "noun": (byte) 1, "verb": (byte) 11, "article": (byte) 111,
+        "dot": (byte) 6, vg: (byte) 7, aanw: (byte) 8, vz: (byte) 9
+    ]
 
-	Map<String, Byte> flags = ["properName": (byte) 1, "pastParticiple": (byte) 11, "flag3": (byte) 111, "flag4": (byte) 112 ]
+	Map<String, Byte> flags = [
+        "properName": (byte) 1, "pastParticiple": (byte) 11, "flag3": (byte) 111, "flag4": (byte) 112,
+        "pv": (byte) 20, "tgw": (byte) 21, "mv": (byte) 22, "soort": (byte) 23, "basis": (byte) 24,
+        pron: (byte) 25, stan: (byte) 26, vol: (byte) 27
+    ]
 
 	SearchResult lastResult
 
@@ -160,6 +167,8 @@ abstract class GroovySearchTest extends GroovyTestCase {
 	}
 
 	Word word(String word, byte type = 0, byte... flags) {
+        Arrays.sort(flags, 0, flags.length)
+
 		return new Word(wordId: getWordId(word), wordTypeId: type, flags: flags)
 	}
 

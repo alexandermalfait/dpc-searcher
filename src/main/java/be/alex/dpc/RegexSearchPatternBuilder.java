@@ -109,7 +109,9 @@ public class RegexSearchPatternBuilder {
             }
             else {
                 for(byte flagId : term.getFlagIds()) {
-                    regex += flagId + FIELD_SUB_DELIMITER + ".*?";
+                    regex += flagId + FIELD_SUB_DELIMITER;
+
+                    regex += "(\\d+"+ FIELD_SUB_DELIMITER + ")*";
                 }
             }
         }
