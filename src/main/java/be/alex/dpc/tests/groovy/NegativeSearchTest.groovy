@@ -81,6 +81,33 @@ class NegativeSearchTest extends GroovySearchTest {
             )
         }
     }
+    
+    @Test
+    public void testExclusionMatchIndexes() {
+        long sentenceId = 0
+
+        testSearch {
+            terms << new SearchTermUsingIds(wordIds: [getWordId("vraag")])
+            terms << new SearchTermUsingIds(wordTypeIds: [ getWordTypeId("WW") ], excludeTerm: true)
+            terms << new SearchTermUsingIds(wordIds: [getWordId("dat")])
+
+            sentenceId = sentence(
+                true,
+                buildWord("Ik VNW(pers,pron,nomin,vol,1,ev;ik)"),
+                buildWord("vraag WW(pv,tgw,ev;vragen)"),
+                buildWord("dat VG(onder;dat)"),
+                buildWord("aan VZ(init;aan)"),
+                buildWord("de LID(bep,stan,rest;de)"),
+                buildWord("Raadsvoorzitter N(eigen,ev,basis,zijd,stan;Raadsvoorzitter)"),
+                buildWord("als VG(onder;als)"),
+                buildWord("ze VNW(pers,pron,stan,red,3,mv;ze)"),
+                buildWord("meeluistert WW(pv,tgw,met-t;meeluisteren)"),
+                buildWord(". LET(;.)")
+            )
+        }
+        
+        assert lastResult.getWordIndexesForSentenceId(sentenceId).size() == 2
+    }
 
 	@Test
 	public void testExclusionWithSkip() {

@@ -69,7 +69,9 @@ public class RegexSearchExecutor {
                     String groupValue = lineMatcher.group(groupIndex);
 
                     if(groupValue != null && groupValue.endsWith(RegexSearchPatternBuilder.INDEX_DELIMITER)) {
-                        wordIndexes.add(Integer.parseInt(groupValue.replaceAll(RegexSearchPatternBuilder.INDEX_DELIMITER, "")));
+                        int wordIndex = Integer.parseInt(groupValue.replaceAll(RegexSearchPatternBuilder.INDEX_DELIMITER, ""));
+
+                        wordIndexes.add(wordIndex);
                     }
                 }
                 

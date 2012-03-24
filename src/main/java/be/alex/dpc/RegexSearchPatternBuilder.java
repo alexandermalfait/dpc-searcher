@@ -37,7 +37,7 @@ public class RegexSearchPatternBuilder {
             }
 
             if (term.isExcludeTerm()) {
-                regex += "((?!.*";
+                regex += "(?:(?!.*";
             }
             else {
                 if (term.getMaximumDistanceFromLastMatch() != null) {
@@ -52,14 +52,14 @@ public class RegexSearchPatternBuilder {
                 }
             }
 
-            regex += buildWordMatch(term);
+            regex += buildWordMatch(term, ! term.isExcludeTerm());
 
             if (term.isExcludeTerm()) {
                 if (term.isLastInSentence()) {
                     regex += "$))";
                 }
                 else if (nextTerm != null) {
-                    regex += "|" + buildWordMatch(nextTerm) + ").)*";
+                    regex += "|" + buildWordMatch(nextTerm, false) + ").)*";
                 }
             }
             else {
@@ -68,7 +68,7 @@ public class RegexSearchPatternBuilder {
 
                     dotTerm.setWordTypeIds(new byte[]{6});
 
-                    regex += "(" + buildWordMatch(dotTerm) + ")?";
+                    regex += "(" + buildWordMatch(dotTerm, false) + ")?";
 
                     regex += "$";
                 }
@@ -81,13 +81,18 @@ public class RegexSearchPatternBuilder {
     }
 
     @SuppressWarnings({"AssignmentToMethodParameter"})
-    private String buildWordMatch(SearchTermUsingIds term) {
+    private String buildWordMatch(SearchTermUsingIds term, boolean collectMatchIndex) {
         String regex = "";
         
         regex += WORD_DELIMITER;
-        
-        regex += "(\\d+" + INDEX_DELIMITER + ")";
-        
+
+        if (collectMatchIndex) {
+            regex += "(\\d+" + INDEX_DELIMITER + ")";
+        }
+        else {
+            regex += "\\d+" + INDEX_DELIMITER;
+        }
+
         if(term.getWordIds() != null) {
             regex += "(" + Joiner.on('|').join(appendToAll(Ints.asList(term.getWordIds()), FIELD_DELIMITER)) + ")";
         }
