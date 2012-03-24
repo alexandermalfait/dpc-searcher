@@ -24,6 +24,8 @@ public class SearchTerm {
 
     private boolean excludeTerm = false;
 
+    private boolean excludedFlagsOrMode;
+
     public String getWord() {
         return word;
     }
@@ -110,5 +112,13 @@ public class SearchTerm {
 
     public void setExcludeTerm(boolean excludeTerm) {
         this.excludeTerm = excludeTerm;
+    }
+
+    public boolean isExcludedFlagsOrMode() {
+        return excludedFlagsOrMode;
+    }
+
+    public void setExcludedFlagsOrMode(boolean excludedFlagsOrMode) {
+        this.excludedFlagsOrMode = excludedFlagsOrMode;
     }
 }

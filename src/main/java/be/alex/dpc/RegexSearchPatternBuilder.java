@@ -115,7 +115,14 @@ public class RegexSearchPatternBuilder {
         }
 
         if(term.getExcludeFlagIds() != null) {
-            regex += "(?!(" + Joiner.on('|').join(appendToAll(Bytes.asList(term.getExcludeFlagIds()), FIELD_SUB_DELIMITER)) + "))";
+            List<String> flagsWithDelimiter = appendToAll(Bytes.asList(term.getExcludeFlagIds()), FIELD_SUB_DELIMITER);
+
+            if(term.isExcludeFlagsOrMode()) {
+                regex += "(?!" + Joiner.on('|').join(flagsWithDelimiter) + ")";
+            }
+            else {
+                regex += "(?!" + Joiner.on("(\\d+" + FIELD_SUB_DELIMITER + ")*").join(flagsWithDelimiter) + ")";
+            }
         }
         
         if(term.getFlagIds() != null) {

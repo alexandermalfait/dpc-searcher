@@ -56,6 +56,8 @@ public class SearchTermConvertor {
             }
 
             convertedTerm.setExcludeFlagIds(flagIds);
+
+            convertedTerm.setExcludeFlagsOrMode(term.isExcludedFlagsOrMode());
         }
     }
 

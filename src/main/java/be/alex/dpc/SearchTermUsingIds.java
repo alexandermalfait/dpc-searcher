@@ -11,6 +11,8 @@ public class SearchTermUsingIds {
 
     private byte[] excludeFlagIds;
 
+    private boolean excludeFlagsOrMode = false;
+
     private boolean firstInSentence = false;
 
     private boolean lastInSentence = false;
@@ -99,5 +101,13 @@ public class SearchTermUsingIds {
 
     public void setExcludeTerm(boolean excludeTerm) {
         this.excludeTerm = excludeTerm;
+    }
+
+    public boolean isExcludeFlagsOrMode() {
+        return excludeFlagsOrMode;
+    }
+
+    public void setExcludeFlagsOrMode(boolean excludeFlagsOrMode) {
+        this.excludeFlagsOrMode = excludeFlagsOrMode;
     }
 }

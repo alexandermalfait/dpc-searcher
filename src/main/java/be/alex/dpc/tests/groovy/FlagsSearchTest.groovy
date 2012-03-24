@@ -150,4 +150,88 @@ class FlagsSearchTest extends GroovySearchTest {
 			sentence(false, "Hier zitten zelfs geen flags op")
 		}
 	}
+
+    @Test
+    public void testFlagExclusionWithOrModeOnMoreComplexData() {
+        testSearch {
+            terms << new SearchTermUsingIds(wordIds: [ getWordId("haar") ])
+            terms << new SearchTermUsingIds(excludeFlagIds: [ getFlagId("inf"), getFlagId("vrij")], excludeFlagsOrMode: true)
+            terms << new SearchTermUsingIds(wordIds: [ getWordId("punt") ] )
+
+            sentence(
+                true,
+                buildWord("Ik VNW(pers,pron,nomin,vol,1,ev;ik)"),
+                buildWord("zou WW(pv,verl,ev;zullen)"),
+                buildWord("haar VNW(bez,det,stan,vol,3,ev,prenom,zonder,agr;haar)"),
+                buildWord("willen WW(pv,tgw,mv;willen)"),
+                buildWord("vragen WW(inf,vrij,zonder;vragen)"),
+                buildWord("dat VNW(aanw,det,stan,prenom,zonder,evon;dat)"),
+                buildWord("punt N(soort,ev,basis,onz,stan;punt)"),
+                buildWord("nog BW(;nog)"),
+                buildWord("eens BW(;eens)"),
+                buildWord("in VZ(init;in)"),
+                buildWord("overweging N(soort,ev,basis,zijd,stan;overweging)"),
+                buildWord("te VZ(init;te)"),
+                buildWord("nemen WW(inf,vrij,zonder;nemen)"),
+                buildWord(". LET(;.)")
+            )
+
+            sentence(
+                false,
+                buildWord("Ik VNW(pers,pron,nomin,vol,1,ev;ik)"),
+                buildWord("zou WW(pv,verl,ev;zullen)"),
+                buildWord("haar VNW(bez,det,stan,vol,3,ev,prenom,zonder,agr;haar)"),
+                buildWord("vragen WW(inf,vrij,zonder;vragen)"),
+                buildWord("punt N(soort,ev,basis,onz,stan;punt)"),
+                buildWord("nog BW(;nog)"),
+                buildWord("eens BW(;eens)"),
+                buildWord("in VZ(init;in)"),
+                buildWord("overweging N(soort,ev,basis,zijd,stan;overweging)"),
+                buildWord("te VZ(init;te)"),
+                buildWord("nemen WW(inf,vrij,zonder;nemen)"),
+                buildWord(". LET(;.)")
+            )
+        }
+    }
+
+    @Test
+    public void testFlagExclusionWithAndMode() {
+        testSearch {
+            terms << new SearchTermUsingIds(wordIds: [ getWordId("haar") ])
+            terms << new SearchTermUsingIds(excludeFlagIds: [ getFlagId("inf"), getFlagId("vrij") ], excludeFlagsOrMode: false)
+            terms << new SearchTermUsingIds(wordIds: [ getWordId("punt") ] )
+
+            sentence(
+                false,
+                buildWord("Ik VNW(pers,pron,nomin,vol,1,ev;ik)"),
+                buildWord("zou WW(pv,verl,ev;zullen)"),
+                buildWord("haar VNW(bez,det,stan,vol,3,ev,prenom,zonder,agr;haar)"),
+                buildWord("vragen WW(inf,vrij,zonder;vragen)"),
+                buildWord("punt N(soort,ev,basis,onz,stan;punt)"),
+                buildWord("nog BW(;nog)"),
+                buildWord("eens BW(;eens)"),
+                buildWord("in VZ(init;in)"),
+                buildWord("overweging N(soort,ev,basis,zijd,stan;overweging)"),
+                buildWord("te VZ(init;te)"),
+                buildWord("nemen WW(inf,vrij,zonder;nemen)"),
+                buildWord(". LET(;.)")
+            )
+
+            sentence(
+                true,
+                buildWord("Ik VNW(pers,pron,nomin,vol,1,ev;ik)"),
+                buildWord("zou WW(pv,verl,ev;zullen)"),
+                buildWord("haar VNW(bez,det,stan,vol,3,ev,prenom,zonder,agr;haar)"),
+                buildWord("vragen WW(inf,blah,zonder;vragen)"),
+                buildWord("punt N(soort,ev,basis,onz,stan;punt)"),
+                buildWord("nog BW(;nog)"),
+                buildWord("eens BW(;eens)"),
+                buildWord("in VZ(init;in)"),
+                buildWord("overweging N(soort,ev,basis,zijd,stan;overweging)"),
+                buildWord("te VZ(init;te)"),
+                buildWord("nemen WW(inf,vrij,zonder;nemen)"),
+                buildWord(". LET(;.)")
+            )
+        }
+    }
 }

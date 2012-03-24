@@ -25,7 +25,7 @@ abstract class GroovySearchTest extends GroovyTestCase {
     ]
 
 	Map<String, Byte> flags = [
-        "properName": (byte) 1, "pastParticiple": (byte) 11, "flag3": (byte) 111, "flag4": (byte) 112,
+        "properName": (byte) 1, "pastParticiple": (byte) 11, "flag3": (byte) 12, "flag4": (byte) 13,
         "pv": (byte) 20, "tgw": (byte) 21, "mv": (byte) 22, "soort": (byte) 23, "basis": (byte) 24,
         pron: (byte) 25, stan: (byte) 26, vol: (byte) 27
     ]
