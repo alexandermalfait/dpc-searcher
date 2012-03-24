@@ -23,6 +23,65 @@ class NegativeSearchTest extends GroovySearchTest {
 		}
 	}
 
+    @Test
+    public void testSimpleExclusionAgain() {
+        testSearch {
+            terms << new SearchTermUsingIds(wordIds: [getWordId("vraag")])
+            terms << new SearchTermUsingIds(wordTypeIds: [ getWordTypeId("WW") ], excludeTerm: true)
+            terms << new SearchTermUsingIds(wordIds: [getWordId("dat")])
+
+            sentence(
+                true,
+                buildWord("Ik VNW(pers,pron,nomin,vol,1,ev;ik)"),
+                buildWord("vraag WW(pv,tgw,ev;vragen)"),
+                buildWord("dat VG(onder;dat)"),
+                buildWord("aan VZ(init;aan)"),
+                buildWord("de LID(bep,stan,rest;de)"),
+                buildWord("Raadsvoorzitter N(eigen,ev,basis,zijd,stan;Raadsvoorzitter)"),
+                buildWord("als VG(onder;als)"),
+                buildWord("ze VNW(pers,pron,stan,red,3,mv;ze)"),
+                buildWord("meeluistert WW(pv,tgw,met-t;meeluisteren)"),
+                buildWord(". LET(;.)")
+            )
+
+            sentence(
+                false,
+                buildWord("Ik VNW(pers,pron,nomin,vol,1,ev;ik)"),
+                buildWord("vraag WW(pv,tgw,ev;vragen)"),
+                buildWord("lachend WW(inf;lachen)"),
+                buildWord("dat VG(onder;dat)"),
+                buildWord("aan VZ(init;aan)"),
+                buildWord("de LID(bep,stan,rest;de)"),
+                buildWord("Raadsvoorzitter N(eigen,ev,basis,zijd,stan;Raadsvoorzitter)"),
+                buildWord("als VG(onder;als)"),
+                buildWord("ze VNW(pers,pron,stan,red,3,mv;ze)"),
+                buildWord("meeluistert WW(pv,tgw,met-t;meeluisteren)"),
+                buildWord(". LET(;.)")
+            )
+
+            sentence(
+                true,
+                buildWord("Ik VNW(pers,pron,nomin,vol,1,ev;ik)"),
+                buildWord("vraag WW(pv,tgw,ev;vragen)"),
+                buildWord("dat VG(onder;dat)"),
+                buildWord("aan VZ(init;aan)"),
+                buildWord("de LID(bep,stan,rest;de)"),
+                buildWord("Raadsvoorzitter N(eigen,ev,basis,zijd,stan;Raadsvoorzitter)"),
+                buildWord("als VG(onder;als)"),
+                buildWord("ze VNW(pers,pron,stan,red,3,mv;ze)"),
+                buildWord("meeluistert WW(pv,tgw,met-t;meeluisteren)"),
+                buildWord("en VG(en;en)"),
+                buildWord("ik VNW(pers,pron,nomin,vol,1,ev;ik)"),
+                buildWord("vraag WW(pv,tgw,ev;vragen)"),
+                buildWord("lachend WW(inf;lachen)"),
+                buildWord("dat VG(onder;dat)"),
+                buildWord("ze VNW(pers,pron,stan,red,3,mv;ze)"),
+                buildWord("meeluistert WW(pv,tgw,met-t;meeluisteren)"),
+                buildWord(". LET(;.)")
+            )
+        }
+    }
+
 	@Test
 	public void testExclusionWithSkip() {
 		testSearch {

@@ -18,23 +18,20 @@ public class SearchTest {
 
         {
             SearchTerm term = new SearchTerm();
-            term.setWord("hebben");
-            term.setFlags(new String[]{"pv"});
+            term.setLemmas(new String[] { "vragen" });
             search.addTerm(term);
         }
 
         {
             SearchTerm term = new SearchTerm();
             term.setWordTypes(new String[] { "ww"});
-            term.setFlags(new String[]{"inf","pv"});
-            term.setMaximumDistanceFromLastMatch(2);
+            term.setExcludeTerm(true);
             search.addTerm(term);
         }
 
         {
             SearchTerm term = new SearchTerm();
-            term.setWordTypes(new String[] { "ww"});
-            term.setLastInSentence(true);
+            term.setWord("dat");
             search.addTerm(term);
         }
 

@@ -1,10 +1,7 @@
 package be.alex.dpc.tests.groovy
 
-import be.alex.dpc.RegexSearchExecutor
-import be.alex.dpc.SearchResult
-import be.alex.dpc.SearchTermUsingIds
-import be.alex.dpc.Word
-import be.alex.dpc.SentenceDumper
+import java.util.regex.Matcher
+import be.alex.dpc.*
 
 abstract class GroovySearchTest extends GroovyTestCase {
 
@@ -23,7 +20,7 @@ abstract class GroovySearchTest extends GroovyTestCase {
 	Map<String, Integer> wordStrings
 
 	Map<String, Byte> types = [
-        "undefined": (byte) 0, "noun": (byte) 1, "verb": (byte) 11, "article": (byte) 111,
+        "undefined": (byte) 0, "noun": (byte) 1, "verb": (byte) 11, "article": (byte) 12,
         "dot": (byte) 6, vg: (byte) 7, aanw: (byte) 8, vz: (byte) 9
     ]
 
@@ -171,6 +168,20 @@ abstract class GroovySearchTest extends GroovyTestCase {
 
 		return new Word(wordId: getWordId(word), wordTypeId: type, flags: flags)
 	}
+    
+    Word buildWord(String data) {
+        Matcher matcher = data =~ /(.+) ([A-Z]+)\(([a-z\d,\-]*);(.+?)\)/
+
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Couldn't parse: $data")
+        }
+        
+        return new Word(
+            wordId: getWordId(matcher.group(1)),
+            wordTypeId: getWordTypeId(matcher.group(2)),
+            flags: matcher.group(3).split(",").collect { getFlagId(it) },
+        )
+    }
 
 	def getWordId(String word) {
 		if(!wordStrings[word]) {
@@ -179,4 +190,20 @@ abstract class GroovySearchTest extends GroovyTestCase {
 
 		wordStrings[word]
 	}
+
+    byte getWordTypeId(String wordType) {
+        if(!types[wordType]) {
+            types[wordType] = (byte) ( (types.values().max() ?: 0) + 1 )
+        }
+
+        types[wordType]
+    }
+
+    byte getFlagId(String flagName) {
+        if(!flags[flagName]) {
+            flags[flagName] = (byte) (  (flags.values().max() ?: 0) + 1 )
+        }
+
+        flags[flagName]
+    }
 }

@@ -21,19 +21,32 @@ public class RegexSearchPatternBuilder {
 
     String buildPattern(List<SearchTermUsingIds> terms) {
         String regex = "^(\\d+)" + SENTENCE_DELIMITER;
+        
+        int index = 0;
 
         for(SearchTermUsingIds term : terms) {
-            if(term.isExcludeTerm()) {
-                regex += "(?!.*";
+            SearchTermUsingIds nextTerm = null;
+            SearchTermUsingIds previousTerm = null;
+            
+            if (index < terms.size() - 1) {
+                nextTerm = terms.get(index + 1);
+            }
+            
+            if(index > 0) {
+                previousTerm = terms.get(index - 1);
+            }
+
+            if (term.isExcludeTerm()) {
+                regex += "((?!.*";
             }
             else {
-                if(term.getMaximumDistanceFromLastMatch() != null) {
-                    for(int i = 0; i < term.getMaximumDistanceFromLastMatch() - 1; i++) {
+                if (term.getMaximumDistanceFromLastMatch() != null) {
+                    for (int i = 0; i < term.getMaximumDistanceFromLastMatch() - 1; i++) {
                         regex += "(W[" + INDEX_DELIMITER + FIELD_DELIMITER + FIELD_SUB_DELIMITER + "\\d]+W)?";
                     }
                 }
                 else {
-                    if(!term.isFirstInSentence()) {
+                    if (! term.isFirstInSentence() && ( previousTerm == null || !previousTerm.isExcludeTerm() )) {
                         regex += ".*?";
                     }
                 }
@@ -41,24 +54,27 @@ public class RegexSearchPatternBuilder {
 
             regex += buildWordMatch(term);
 
-            if(term.isExcludeTerm()) {
-                if(term.isLastInSentence()) {
-                    regex += "$";
+            if (term.isExcludeTerm()) {
+                if (term.isLastInSentence()) {
+                    regex += "$))";
                 }
-
-                regex += ")";
+                else if (nextTerm != null) {
+                    regex += "|" + buildWordMatch(nextTerm) + ").)*";
+                }
             }
             else {
-                if(term.isLastInSentence()) {
+                if (term.isLastInSentence()) {
                     SearchTermUsingIds dotTerm = new SearchTermUsingIds();
-                    
-                    dotTerm.setWordTypeIds(new byte[] { 6 });
+
+                    dotTerm.setWordTypeIds(new byte[]{6});
 
                     regex += "(" + buildWordMatch(dotTerm) + ")?";
-                    
+
                     regex += "$";
                 }
             }
+
+            index++;
         }
 
         return regex;
