@@ -203,7 +203,7 @@ abstract class GroovySearchTest extends GroovyTestCase {
         if(!flags[flagName]) {
             flags[flagName] = (byte) (  (flags.values().max() ?: 0) + 1 )
         }
-
+        
         flags[flagName]
     }
 }

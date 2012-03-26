@@ -37,17 +37,18 @@ public class RegexSearchPatternBuilder {
             }
 
             if (term.isExcludeTerm()) {
-                regex += "(?:(?!.*";
+                regex += "(?:(?!";
             }
             else {
-                if (term.getMaximumDistanceFromLastMatch() != null) {
-                    for (int i = 0; i < term.getMaximumDistanceFromLastMatch() - 1; i++) {
-                        regex += "(W[" + INDEX_DELIMITER + FIELD_DELIMITER + FIELD_SUB_DELIMITER + "\\d]+W)?";
+                if(( previousTerm == null || !previousTerm.isExcludeTerm())) {
+                    if (term.getMaximumDistanceFromLastMatch() != null) {
+                        regex += "(W[" + INDEX_DELIMITER + FIELD_DELIMITER + FIELD_SUB_DELIMITER + "\\d]+W)";
+                        regex += "{0," + ( term.getMaximumDistanceFromLastMatch() - 1 ) + "}";
                     }
-                }
-                else {
-                    if (! term.isFirstInSentence() && ( previousTerm == null || !previousTerm.isExcludeTerm() )) {
-                        regex += ".*?";
+                    else {
+                        if (! term.isFirstInSentence()) {
+                            regex += ".*?";
+                        }
                     }
                 }
             }
@@ -55,11 +56,20 @@ public class RegexSearchPatternBuilder {
             regex += buildWordMatch(term, ! term.isExcludeTerm());
 
             if (term.isExcludeTerm()) {
-                if (term.isLastInSentence()) {
-                    regex += "$))";
+                if (nextTerm != null) {
+                    regex += "|" + buildWordMatch(nextTerm, false) + ")";
+
+                    regex += "(W[" + INDEX_DELIMITER + FIELD_DELIMITER + FIELD_SUB_DELIMITER + "\\d]+W))";
+
+                    if (nextTerm.getMaximumDistanceFromLastMatch() != null) {
+                        regex += "{0," + ( nextTerm.getMaximumDistanceFromLastMatch() - 1 ) + "}";
+                    }
+                    else {
+                        regex += "*";
+                    }
                 }
-                else if (nextTerm != null) {
-                    regex += "|" + buildWordMatch(nextTerm, false) + ").)*";
+                else {
+                    regex += "*";
                 }
             }
             else {
@@ -126,24 +136,24 @@ public class RegexSearchPatternBuilder {
         }
         
         if(term.getFlagIds() != null) {
-            regex += "(\\d+"+ FIELD_SUB_DELIMITER + ")*";
+            regex += "(?:\\d+"+ FIELD_SUB_DELIMITER + ")*";
 
             List<Byte> flagList = Bytes.asList(term.getFlagIds());
 
             Collections.sort(flagList);
             
             if(term.isFlagsOrMode()) {
-                regex += "(" + Joiner.on('|').join(appendToAll(flagList, FIELD_SUB_DELIMITER)) + ")";
+                regex += "(?:" + Joiner.on('|').join(appendToAll(flagList, FIELD_SUB_DELIMITER)) + ")";
             }
             else {
                 for(byte flagId : term.getFlagIds()) {
                     regex += flagId + FIELD_SUB_DELIMITER;
 
-                    regex += "(\\d+"+ FIELD_SUB_DELIMITER + ")*";
+                    regex += "(?:\\d+"+ FIELD_SUB_DELIMITER + ")*";
                 }
             }
         }
-        regex += "(\\d+"+ FIELD_SUB_DELIMITER + ")*";
+        regex += "(?:\\d+"+ FIELD_SUB_DELIMITER + ")*";
 
         regex += WORD_DELIMITER;
 
