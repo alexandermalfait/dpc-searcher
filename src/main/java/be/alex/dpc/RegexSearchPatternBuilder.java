@@ -13,14 +13,14 @@ public class RegexSearchPatternBuilder {
         String regex = "^(\\d+)S";
         
         for(SearchTermUsingIds term : terms) {
-            boolean collectMatchIndex = term.getMinOccurences() == 1 && term.getMaxOccurences() != null && term.getMaxOccurences() == 1;
+            boolean collectMatchIndex = term.getMinOccurrences() == 1 && term.getMaxOccurrences() != null && term.getMaxOccurrences() == 1;
 
             regex += "(" + buildWordMatch(term, collectMatchIndex) + ")";
 
-            regex += "{" + term.getMinOccurences() + ",";
+            regex += "{" + term.getMinOccurrences() + ",";
 
-            if (term.getMaxOccurences() != null) {
-                regex += term.getMaxOccurences();
+            if (term.getMaxOccurrences() != null) {
+                regex += term.getMaxOccurrences();
             }
 
             regex += "}";

@@ -17,9 +17,9 @@ public class SearchTermUsingIds {
 
     private boolean invertTerm = false;
 
-    private int minOccurences;
+    private int minOccurrences;
 
-    private Integer maxOccurences;
+    private Integer maxOccurrences;
 
     public int[] getWordIds() {
         return wordIds;
@@ -77,20 +77,20 @@ public class SearchTermUsingIds {
         this.excludeFlagsOrMode = excludeFlagsOrMode;
     }
 
-    public int getMinOccurences() {
-        return minOccurences;
+    public int getMinOccurrences() {
+        return minOccurrences;
     }
 
-    public void setMinOccurences(int minOccurences) {
-        this.minOccurences = minOccurences;
+    public void setMinOccurrences(int minOccurrences) {
+        this.minOccurrences = minOccurrences;
     }
 
-    public Integer getMaxOccurences() {
-        return maxOccurences;
+    public Integer getMaxOccurrences() {
+        return maxOccurrences;
     }
 
-    public void setMaxOccurences(Integer maxOccurences) {
-        this.maxOccurences = maxOccurences;
+    public void setMaxOccurrences(Integer maxOccurrences) {
+        this.maxOccurrences = maxOccurrences;
     }
 
     public boolean isInvertTerm() {

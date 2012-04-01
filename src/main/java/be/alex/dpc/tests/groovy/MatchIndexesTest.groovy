@@ -11,8 +11,8 @@ class MatchIndexesTest extends GroovySearchTest {
 		
 		testSearch {
             terms << new SearchTermUsingIds()
-			terms << new SearchTermUsingIds(wordIds: [getWordId("de")], minOccurences: 1, maxOccurences: 1)
-			terms << new SearchTermUsingIds(wordIds: [getWordId("kat")], minOccurences: 1, maxOccurences: 1)
+			terms << new SearchTermUsingIds(wordIds: [getWordId("de")], minOccurrences: 1, maxOccurrences: 1)
+			terms << new SearchTermUsingIds(wordIds: [getWordId("kat")], minOccurrences: 1, maxOccurrences: 1)
             terms << new SearchTermUsingIds()
 
 			sentenceId = sentence(

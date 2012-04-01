@@ -9,7 +9,7 @@ class OccurencesTest extends GroovySearchTest {
     public void testMinMaxOccurences() {
         testSearch {
             terms << new SearchTermUsingIds()
-            terms << new SearchTermUsingIds(wordIds: [getWordId("dum")], minOccurences: 3, maxOccurences: 5)
+            terms << new SearchTermUsingIds(wordIds: [getWordId("dum")], minOccurrences: 3, maxOccurrences: 5)
             terms << new SearchTermUsingIds()
 
             sentence(
@@ -37,9 +37,9 @@ class OccurencesTest extends GroovySearchTest {
     @Test
     public void testMaxOccurences() {
         testSearch {
-            terms << new SearchTermUsingIds(wordIds: [ getWordId("hello")], minOccurences: 1, maxOccurences: 1)
-            terms << new SearchTermUsingIds(maxOccurences: 3)
-            terms << new SearchTermUsingIds(wordIds: [ getWordId("world")], minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds(wordIds: [ getWordId("hello")], minOccurrences: 1, maxOccurrences: 1)
+            terms << new SearchTermUsingIds(maxOccurrences: 3)
+            terms << new SearchTermUsingIds(wordIds: [ getWordId("world")], minOccurrences: 1, maxOccurrences: 1)
 
             sentence(
                 true, "hello world"

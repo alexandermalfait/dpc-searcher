@@ -20,9 +20,9 @@ public class SearchTerm {
 
     private boolean excludedFlagsOrMode;
 
-    private int minOccurences;
+    private int minOccurrences;
 
-    private Integer maxOccurences;
+    private Integer maxOccurrences;
 
     public String getWord() {
         return word;
@@ -88,20 +88,20 @@ public class SearchTerm {
         this.excludedFlagsOrMode = excludedFlagsOrMode;
     }
 
-    public int getMinOccurences() {
-        return minOccurences;
+    public int getMinOccurrences() {
+        return minOccurrences;
     }
 
-    public void setMinOccurences(int minOccurences) {
-        this.minOccurences = minOccurences;
+    public void setMinOccurrences(int minOccurrences) {
+        this.minOccurrences = minOccurrences;
     }
 
-    public Integer getMaxOccurences() {
-        return maxOccurences;
+    public Integer getMaxOccurrences() {
+        return maxOccurrences;
     }
 
-    public void setMaxOccurences(Integer maxOccurences) {
-        this.maxOccurences = maxOccurences;
+    public void setMaxOccurrences(Integer maxOccurrences) {
+        this.maxOccurrences = maxOccurrences;
     }
 
     public boolean isInvertTerm() {

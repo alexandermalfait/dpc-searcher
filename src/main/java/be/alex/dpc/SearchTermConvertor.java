@@ -104,8 +104,8 @@ public class SearchTermConvertor {
         convertedTerm.setInvertTerm(term.isInvertTerm());
         convertedTerm.setFlagsOrMode(term.isFlagsOrMode());
         convertedTerm.setExcludeFlagsOrMode(term.isExcludedFlagsOrMode());
-        convertedTerm.setMinOccurences(term.getMinOccurences());
-        convertedTerm.setMaxOccurences(term.getMaxOccurences());
+        convertedTerm.setMinOccurrences(term.getMinOccurrences());
+        convertedTerm.setMaxOccurrences(term.getMaxOccurrences());
     }
 
 }

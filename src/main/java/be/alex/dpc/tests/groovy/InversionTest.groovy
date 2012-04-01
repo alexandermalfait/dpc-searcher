@@ -8,10 +8,10 @@ class InversionTest extends GroovySearchTest {
 	@Test
 	public void testWordInversion() {
 		testSearch {
-			terms << new SearchTermUsingIds(wordIds: [getWordId("de")], minOccurences: 1, maxOccurences: 1)
-			terms << new SearchTermUsingIds(wordIds: [getWordId("kat")], minOccurences: 1, maxOccurences: 1)
+			terms << new SearchTermUsingIds(wordIds: [getWordId("de")], minOccurrences: 1, maxOccurrences: 1)
+			terms << new SearchTermUsingIds(wordIds: [getWordId("kat")], minOccurrences: 1, maxOccurrences: 1)
 			terms << new SearchTermUsingIds(wordIds: [getWordId("krollen")], invertTerm: true)
-			terms << new SearchTermUsingIds(wordIds: [getWordId("trap")], minOccurences: 1, maxOccurences: 1)
+			terms << new SearchTermUsingIds(wordIds: [getWordId("trap")], minOccurrences: 1, maxOccurrences: 1)
             terms << new SearchTermUsingIds()
 
 			sentence(
@@ -27,10 +27,10 @@ class InversionTest extends GroovySearchTest {
     @Test
     public void testMultipleWordInversion() {
         testSearch {
-            terms << new SearchTermUsingIds(wordIds: [getWordId("de")], minOccurences: 1, maxOccurences: 1)
-            terms << new SearchTermUsingIds(wordIds: [getWordId("kat")], minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds(wordIds: [getWordId("de")], minOccurrences: 1, maxOccurrences: 1)
+            terms << new SearchTermUsingIds(wordIds: [getWordId("kat")], minOccurrences: 1, maxOccurrences: 1)
             terms << new SearchTermUsingIds(wordIds: [getWordId("krollen"), getWordId("bollen")], invertTerm: true)
-            terms << new SearchTermUsingIds(wordIds: [getWordId("trap")], minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds(wordIds: [getWordId("trap")], minOccurrences: 1, maxOccurrences: 1)
             terms << new SearchTermUsingIds()
 
             sentence(
@@ -51,9 +51,9 @@ class InversionTest extends GroovySearchTest {
     public void testWordTypeInversion() {
         testSearch {
             terms << new SearchTermUsingIds()
-            terms << new SearchTermUsingIds(wordIds: [getWordId("vraag")], minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds(wordIds: [getWordId("vraag")], minOccurrences: 1, maxOccurrences: 1)
             terms << new SearchTermUsingIds(wordTypeIds: [ getWordTypeId("WW") ], invertTerm: true)
-            terms << new SearchTermUsingIds(wordIds: [getWordId("dat")], minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds(wordIds: [getWordId("dat")], minOccurrences: 1, maxOccurrences: 1)
             terms << new SearchTermUsingIds()
 
             sentence(
@@ -111,12 +111,12 @@ class InversionTest extends GroovySearchTest {
 	@Test
 	public void testExclusionWithSkip() {
 		testSearch {
-			terms << new SearchTermUsingIds(wordIds: [getWordId("de")], minOccurences: 1, maxOccurences: 1)
-			terms << new SearchTermUsingIds(wordIds: [getWordId("kat")], minOccurences: 1, maxOccurences: 1)
+			terms << new SearchTermUsingIds(wordIds: [getWordId("de")], minOccurrences: 1, maxOccurrences: 1)
+			terms << new SearchTermUsingIds(wordIds: [getWordId("kat")], minOccurrences: 1, maxOccurrences: 1)
             terms << new SearchTermUsingIds()
-			terms << new SearchTermUsingIds(wordIds: [getWordId("krabt")], minOccurences: 1, maxOccurences: 1)
+			terms << new SearchTermUsingIds(wordIds: [getWordId("krabt")], minOccurrences: 1, maxOccurrences: 1)
 			terms << new SearchTermUsingIds(wordIds: [getWordId("krollen")], invertTerm: true)
-			terms << new SearchTermUsingIds(wordIds: [getWordId("trap")], minOccurences: 1, maxOccurences: 1)
+			terms << new SearchTermUsingIds(wordIds: [getWordId("trap")], minOccurrences: 1, maxOccurrences: 1)
 
 			sentence(
 				false, "de kat krabt de krollen van de trap"
@@ -140,9 +140,9 @@ class InversionTest extends GroovySearchTest {
     public void testExclusionWithDistance() {
         testSearch {
             terms << new SearchTermUsingIds()
-            terms << new SearchTermUsingIds(wordIds: [getWordId("kat")], minOccurences: 1, maxOccurences: 1)
-            terms << new SearchTermUsingIds(wordIds: [getWordId("krabt")], invertTerm: true, minOccurences: 1, maxOccurences: 3)
-            terms << new SearchTermUsingIds(wordIds: [getWordId("trap")], minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds(wordIds: [getWordId("kat")], minOccurrences: 1, maxOccurrences: 1)
+            terms << new SearchTermUsingIds(wordIds: [getWordId("krabt")], invertTerm: true, minOccurrences: 1, maxOccurrences: 3)
+            terms << new SearchTermUsingIds(wordIds: [getWordId("trap")], minOccurrences: 1, maxOccurrences: 1)
 
             sentence(
                 false, "de kat krabt de krollen van de trap"
@@ -167,10 +167,10 @@ class InversionTest extends GroovySearchTest {
     public void testExclusionWithDistanceOnRealData() {
         testSearch {
             terms << new SearchTermUsingIds()
-            terms << new SearchTermUsingIds(wordIds: [getWordId("willen")], minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds(wordIds: [getWordId("willen")], minOccurrences: 1, maxOccurrences: 1)
             terms << new SearchTermUsingIds(wordTypeIds: [getWordTypeId("WW")], invertTerm: true)
             //terms << new SearchTermUsingIds(maxOccurences: 3)
-            terms << new SearchTermUsingIds(wordIds: [getWordId("dat")], minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds(wordIds: [getWordId("dat")], minOccurrences: 1, maxOccurrences: 1)
             terms << new SearchTermUsingIds()
 
             sentence(

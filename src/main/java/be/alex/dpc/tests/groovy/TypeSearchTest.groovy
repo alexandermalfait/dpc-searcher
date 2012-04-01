@@ -9,7 +9,7 @@ class TypeSearchTest extends GroovySearchTest {
 	public void testBasicSearch() {
 		testSearch {
             terms << new SearchTermUsingIds()
-			terms << new SearchTermUsingIds(wordTypeIds: [types.verb], minOccurences: 1, maxOccurences: 1)
+			terms << new SearchTermUsingIds(wordTypeIds: [types.verb], minOccurrences: 1, maxOccurrences: 1)
             terms << new SearchTermUsingIds()
 
 			sentence(true,
@@ -28,7 +28,7 @@ class TypeSearchTest extends GroovySearchTest {
 	@Test
 	public void testOrSearch() {
 		testSearch {
-			terms << new SearchTermUsingIds(wordTypeIds: [types.verb, types.noun ], minOccurences: 1, maxOccurences: 1)
+			terms << new SearchTermUsingIds(wordTypeIds: [types.verb, types.noun ], minOccurrences: 1, maxOccurrences: 1)
 
 			sentence(true, word("hallo", types.noun))
 
