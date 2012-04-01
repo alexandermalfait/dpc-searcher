@@ -25,7 +25,6 @@ public class SearchTest {
         {
             SearchTerm term = new SearchTerm();
             term.setWordTypes(new String[] { "ww"});
-            term.setExcludeTerm(true);
             search.addTerm(term);
         }
 

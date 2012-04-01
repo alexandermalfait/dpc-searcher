@@ -5,87 +5,28 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class RegexSearchPatternBuilder {
-    public static final String SENTENCE_DELIMITER = "S";
-
-    public static final String WORD_DELIMITER = "W";
-    
-    public static final String INDEX_DELIMITER = "I";
-
-    public static final String FIELD_DELIMITER = "F";
-
-    public static final String FIELD_SUB_DELIMITER = "D";
 
     String buildPattern(List<SearchTermUsingIds> terms) {
-        String regex = "^(\\d+)" + SENTENCE_DELIMITER;
+        String regex = "^(\\d+)S";
         
-        int index = 0;
-
         for(SearchTermUsingIds term : terms) {
-            SearchTermUsingIds nextTerm = null;
-            SearchTermUsingIds previousTerm = null;
-            
-            if (index < terms.size() - 1) {
-                nextTerm = terms.get(index + 1);
-            }
-            
-            if(index > 0) {
-                previousTerm = terms.get(index - 1);
-            }
+            boolean collectMatchIndex = term.getMinOccurences() == 1 && term.getMaxOccurences() != null && term.getMaxOccurences() == 1;
 
-            if (term.isExcludeTerm()) {
-                regex += "(?:(?!";
-            }
-            else {
-                if(( previousTerm == null || !previousTerm.isExcludeTerm())) {
-                    if (term.getMaximumDistanceFromLastMatch() != null) {
-                        regex += "(W[" + INDEX_DELIMITER + FIELD_DELIMITER + FIELD_SUB_DELIMITER + "\\d]+W)";
-                        regex += "{0," + ( term.getMaximumDistanceFromLastMatch() - 1 ) + "}";
-                    }
-                    else {
-                        if (! term.isFirstInSentence()) {
-                            regex += ".*?";
-                        }
-                    }
-                }
+            regex += "(" + buildWordMatch(term, collectMatchIndex) + ")";
+
+            regex += "{" + term.getMinOccurences() + ",";
+
+            if (term.getMaxOccurences() != null) {
+                regex += term.getMaxOccurences();
             }
 
-            regex += buildWordMatch(term, ! term.isExcludeTerm());
-
-            if (term.isExcludeTerm()) {
-                if (nextTerm != null) {
-                    regex += "|" + buildWordMatch(nextTerm, false) + ")";
-
-                    regex += "(W[" + INDEX_DELIMITER + FIELD_DELIMITER + FIELD_SUB_DELIMITER + "\\d]+W))";
-
-                    if (nextTerm.getMaximumDistanceFromLastMatch() != null) {
-                        regex += "{0," + ( nextTerm.getMaximumDistanceFromLastMatch() - 1 ) + "}";
-                    }
-                    else {
-                        regex += "*";
-                    }
-                }
-                else {
-                    regex += "*";
-                }
-            }
-            else {
-                if (term.isLastInSentence()) {
-                    SearchTermUsingIds dotTerm = new SearchTermUsingIds();
-
-                    dotTerm.setWordTypeIds(new byte[]{6});
-
-                    regex += "(" + buildWordMatch(dotTerm, false) + ")?";
-
-                    regex += "$";
-                }
-            }
-
-            index++;
+            regex += "}";
         }
+
+        regex += "$";
 
         return regex;
     }
@@ -94,68 +35,103 @@ public class RegexSearchPatternBuilder {
     private String buildWordMatch(SearchTermUsingIds term, boolean collectMatchIndex) {
         String regex = "";
         
-        regex += WORD_DELIMITER;
+        regex += "W";
 
         if (collectMatchIndex) {
-            regex += "(\\d+" + INDEX_DELIMITER + ")";
+            regex += "(\\d+I)";
         }
         else {
-            regex += "\\d+" + INDEX_DELIMITER;
+            regex += "\\d+I";
         }
 
         if(term.getWordIds() != null) {
-            regex += "(" + Joiner.on('|').join(appendToAll(Ints.asList(term.getWordIds()), FIELD_DELIMITER)) + ")";
+            List<String> wordsWithDelimiter = appendToAll(Ints.asList(term.getWordIds()), "F");
+
+            if (term.isInvertTerm()) {
+                regex += "(?!" + Joiner.on('|').join(wordsWithDelimiter) + ")";
+
+                regex += "\\d+F";
+            }
+            else {
+                regex += "(" + Joiner.on('|').join(wordsWithDelimiter) + ")";
+            }
         }
         else {
-            regex += "\\d+" + FIELD_DELIMITER;
+            regex += "\\d+F";
         }
 
         if(term.getLemmaIds() != null) {
-            regex += "(" + Joiner.on('|').join(appendToAll(Ints.asList(term.getLemmaIds()), FIELD_DELIMITER)) + ")";
+            List<String> lemmasWithDelimiter = appendToAll(Ints.asList(term.getLemmaIds()), "F");
+
+            if (term.isInvertTerm()) {
+                regex += "(?!" + Joiner.on('|').join(lemmasWithDelimiter) + ")";
+
+                regex += "\\d+F";
+            }
+            else {
+                regex += "(" + Joiner.on('|').join(lemmasWithDelimiter) + ")";
+            }
         }
         else {
-            regex += "\\d+" + FIELD_DELIMITER;
+            regex += "\\d+F";
         }
 
         if(term.getWordTypeIds() != null) {
-            regex += "(" + Joiner.on('|').join(Bytes.asList(term.getWordTypeIds())) + ")" + FIELD_DELIMITER;
+            if (term.isInvertTerm()) {
+                regex += "(?!" + Joiner.on('|').join(Bytes.asList(term.getWordTypeIds())) + ")";
+
+                regex += "\\d+F";
+            }
+            else {
+                regex += "(" + Joiner.on('|').join(Bytes.asList(term.getWordTypeIds())) + ")" + "F";
+            }
+
         }
         else {
-            regex += "\\d+" + FIELD_DELIMITER;
+            regex += "\\d+F";
         }
 
         if(term.getExcludeFlagIds() != null) {
-            List<String> flagsWithDelimiter = appendToAll(Bytes.asList(term.getExcludeFlagIds()), FIELD_SUB_DELIMITER);
-
-            if(term.isExcludeFlagsOrMode()) {
-                regex += "(?!" + Joiner.on('|').join(flagsWithDelimiter) + ")";
-            }
-            else {
-                regex += "(?!" + Joiner.on("(\\d+" + FIELD_SUB_DELIMITER + ")*").join(flagsWithDelimiter) + ")";
-            }
+            regex += buildFlagSearch(term.getExcludeFlagIds(), term.isExcludeFlagsOrMode(), ! term.isInvertTerm());
         }
         
         if(term.getFlagIds() != null) {
-            regex += "(?:\\d+"+ FIELD_SUB_DELIMITER + ")*";
-
-            List<Byte> flagList = Bytes.asList(term.getFlagIds());
-
-            Collections.sort(flagList);
-            
-            if(term.isFlagsOrMode()) {
-                regex += "(?:" + Joiner.on('|').join(appendToAll(flagList, FIELD_SUB_DELIMITER)) + ")";
-            }
-            else {
-                for(byte flagId : term.getFlagIds()) {
-                    regex += flagId + FIELD_SUB_DELIMITER;
-
-                    regex += "(?:\\d+"+ FIELD_SUB_DELIMITER + ")*";
-                }
-            }
+            regex += buildFlagSearch(term.getFlagIds(), term.isFlagsOrMode(), term.isInvertTerm());
         }
-        regex += "(?:\\d+"+ FIELD_SUB_DELIMITER + ")*";
 
-        regex += WORD_DELIMITER;
+        if(term.getExcludeFlagIds() == null && term.getFlagIds() == null) {
+            regex += "(?:\\d+D)*";
+        }
+
+        regex += "W";
+
+        return regex;
+    }
+
+    private String buildFlagSearch(byte[] flagIds, boolean orMode, boolean inverted) {
+        List<String> flagsWithDelimiter = appendToAll(Bytes.asList(flagIds), "D");
+
+        String regex = "";
+
+        if (inverted) {
+            regex += "(?!";
+        }
+        else {
+            regex += "(?:";
+        }
+
+        regex += "(\\d+D)*";
+
+        if(orMode) {
+            regex += Joiner.on('|').join(flagsWithDelimiter);
+        }
+        else {
+            regex += Joiner.on("(\\d+D)*").join(flagsWithDelimiter);
+        }
+
+        regex += "(\\d+D)*";
+
+        regex += ")[\\dD]*";
 
         return regex;
     }

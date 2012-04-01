@@ -68,8 +68,8 @@ public class RegexSearchExecutor {
                 for(int groupIndex = 2; groupIndex < lineMatcher.groupCount(); groupIndex++) {
                     String groupValue = lineMatcher.group(groupIndex);
 
-                    if(groupValue != null && groupValue.endsWith(RegexSearchPatternBuilder.INDEX_DELIMITER)) {
-                        int wordIndex = Integer.parseInt(groupValue.replaceAll(RegexSearchPatternBuilder.INDEX_DELIMITER, ""));
+                    if(groupValue != null && groupValue.endsWith("I")) {
+                        int wordIndex = Integer.parseInt(groupValue.replaceAll("I", ""));
 
                         wordIndexes.add(wordIndex);
                     }

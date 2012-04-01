@@ -101,11 +101,11 @@ public class SearchTermConvertor {
     }
 
     private void copyBasicData(SearchTerm term, SearchTermUsingIds convertedTerm) {
-        convertedTerm.setFirstInSentence(term.isFirstInSentence());
-        convertedTerm.setLastInSentence(term.isLastInSentence());
-        convertedTerm.setMaximumDistanceFromLastMatch(term.getMaximumDistanceFromLastMatch());
+        convertedTerm.setInvertTerm(term.isInvertTerm());
         convertedTerm.setFlagsOrMode(term.isFlagsOrMode());
-        convertedTerm.setExcludeTerm(term.isExcludeTerm());
+        convertedTerm.setExcludeFlagsOrMode(term.isExcludedFlagsOrMode());
+        convertedTerm.setMinOccurences(term.getMinOccurences());
+        convertedTerm.setMaxOccurences(term.getMaxOccurences());
     }
 
 }

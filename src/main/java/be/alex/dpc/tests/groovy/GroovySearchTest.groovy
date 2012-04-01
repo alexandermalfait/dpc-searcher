@@ -118,8 +118,8 @@ abstract class GroovySearchTest extends GroovyTestCase {
 			parts << "type = " + term.wordTypeIds.collect { formatType((byte) it) }.join('|')
 		}
 
-		if(term.excludeTerm) {
-			parts << "!excluded!"
+		if(term.invertTerm) {
+			parts << "!inverted!"
 		}
 
 		parts.join(" && ")

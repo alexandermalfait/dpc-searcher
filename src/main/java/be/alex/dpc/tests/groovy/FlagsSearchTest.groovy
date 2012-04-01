@@ -7,8 +7,9 @@ class FlagsSearchTest extends GroovySearchTest {
 	@Test
 	public void testSimpleFlagSearch() {
 		testSearch {
-			terms << new SearchTermUsingIds(flagIds: [flags.properName], flagsOrMode: false)
-			terms << new SearchTermUsingIds(flagIds: [flags.pastParticiple], flagsOrMode: false)
+			terms << new SearchTermUsingIds(flagIds: [flags.properName], flagsOrMode: false, minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds()
+			terms << new SearchTermUsingIds(flagIds: [flags.pastParticiple], flagsOrMode: false, minOccurences: 1, maxOccurences: 1)
 
 			sentence(
 				true,
@@ -39,8 +40,10 @@ class FlagsSearchTest extends GroovySearchTest {
 	@Test
 	public void testOrFlagSearch() {
 		testSearch {
-			terms << new SearchTermUsingIds(flagIds: [flags.properName, flags.pastParticiple], flagsOrMode: true)
-			terms << new SearchTermUsingIds(flagIds: [flags.pastParticiple], flagsOrMode: false)
+			terms << new SearchTermUsingIds(flagIds: [flags.properName, flags.pastParticiple], flagsOrMode: true, minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds()
+			terms << new SearchTermUsingIds(flagIds: [flags.pastParticiple], flagsOrMode: false, minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds()
 
 			sentence(
 				true,
@@ -65,8 +68,9 @@ class FlagsSearchTest extends GroovySearchTest {
 	@Test
 	public void testAndFlagSearch() {
 		testSearch {
-			terms << new SearchTermUsingIds(flagIds: [flags.flag3, flags.flag4], flagsOrMode: false)
-			terms << new SearchTermUsingIds(flagIds: [flags.pastParticiple], flagsOrMode: false)
+			terms << new SearchTermUsingIds(flagIds: [flags.flag3, flags.flag4], flagsOrMode: false, minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds()
+			terms << new SearchTermUsingIds(flagIds: [flags.pastParticiple], flagsOrMode: false, minOccurences: 1, maxOccurences: 1)
 
 			sentence(
 				true,
@@ -89,11 +93,38 @@ class FlagsSearchTest extends GroovySearchTest {
 
 	}
 
+    @Test
+    public void testSimpleFlagExclusion() {
+        testSearch {
+            terms << new SearchTermUsingIds(excludeFlagIds: [flags.properName], flagsOrMode: false, minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds()
+
+            sentence(
+                true,
+                word("alex", types.noun, flags.flag3, flags.flag4),
+                word("heeft"),
+                word("lekker"),
+                word("gegeten", types.verb, flags.pastParticiple),
+            )
+
+            sentence(
+                false,
+                word("alex", types.noun, flags.flag3, flags.flag4, flags.properName),
+                word("heeft"),
+                word("lekker"),
+                word("gegeten", types.verb, flags.pastParticiple),
+            )
+
+            sentence(true, "Hier zitten zelfs geen flags op")
+        }
+    }
+
 	@Test
 	public void testFlagExclusion() {
 		testSearch {
-			terms << new SearchTermUsingIds(flagIds: [flags.flag3, flags.flag4], excludeFlagIds: [flags.properName], flagsOrMode: false)
-			terms << new SearchTermUsingIds(flagIds: [flags.pastParticiple], flagsOrMode: false)
+			terms << new SearchTermUsingIds(flagIds: [flags.flag3, flags.flag4], excludeFlagIds: [flags.properName], flagsOrMode: false, minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds()
+			terms << new SearchTermUsingIds(flagIds: [flags.pastParticiple], flagsOrMode: false, minOccurences: 1, maxOccurences: 1)
 
 			sentence(
 				true,
@@ -125,38 +156,16 @@ class FlagsSearchTest extends GroovySearchTest {
 
 	}
 
-	@Test
-	public void testFlagExclusionWithOrMode() {
-		testSearch {
-			terms << new SearchTermUsingIds(flagIds: [flags.flag3, flags.flag4], excludeFlagIds: [flags.properName], flagsOrMode: true)
-			terms << new SearchTermUsingIds(flagIds: [flags.pastParticiple], flagsOrMode: false)
-
-			sentence(
-				true,
-				word("alex", types.noun, flags.flag3, flags.flag4),
-				word("heeft"),
-				word("lekker"),
-				word("gegeten", types.verb, flags.pastParticiple),
-			)
-
-			sentence(
-				false,
-				word("alex", types.noun, flags.flag3, flags.flag4, flags.properName),
-				word("heeft"),
-				word("lekker"),
-				word("gegeten", types.verb, flags.pastParticiple),
-			)
-
-			sentence(false, "Hier zitten zelfs geen flags op")
-		}
-	}
-
     @Test
     public void testFlagExclusionWithOrModeOnMoreComplexData() {
         testSearch {
-            terms << new SearchTermUsingIds(wordIds: [ getWordId("haar") ])
-            terms << new SearchTermUsingIds(excludeFlagIds: [ getFlagId("inf"), getFlagId("vrij")], excludeFlagsOrMode: true)
-            terms << new SearchTermUsingIds(wordIds: [ getWordId("punt") ] )
+            terms << new SearchTermUsingIds()
+            terms << new SearchTermUsingIds(wordIds: [ getWordId("haar") ], minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds()
+            terms << new SearchTermUsingIds(excludeFlagIds: [ getFlagId("inf"), getFlagId("vrij")], excludeFlagsOrMode: true, minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds()
+            terms << new SearchTermUsingIds(wordIds: [ getWordId("punt") ], minOccurences: 1, maxOccurences: 1 )
+            terms << new SearchTermUsingIds()
 
             sentence(
                 true,
@@ -197,9 +206,13 @@ class FlagsSearchTest extends GroovySearchTest {
     @Test
     public void testFlagExclusionWithAndMode() {
         testSearch {
-            terms << new SearchTermUsingIds(wordIds: [ getWordId("haar") ])
-            terms << new SearchTermUsingIds(excludeFlagIds: [ getFlagId("inf"), getFlagId("vrij") ], excludeFlagsOrMode: false)
-            terms << new SearchTermUsingIds(wordIds: [ getWordId("punt") ] )
+            terms << new SearchTermUsingIds()
+            terms << new SearchTermUsingIds(wordIds: [ getWordId("haar") ], minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds()
+            terms << new SearchTermUsingIds(excludeFlagIds: [ getFlagId("inf"), getFlagId("vrij") ], excludeFlagsOrMode: false, minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds()
+            terms << new SearchTermUsingIds(wordIds: [ getWordId("punt") ] , minOccurences: 1, maxOccurences: 1)
+            terms << new SearchTermUsingIds()
 
             sentence(
                 false,

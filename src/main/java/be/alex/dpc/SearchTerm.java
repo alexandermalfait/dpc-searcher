@@ -8,12 +8,6 @@ public class SearchTerm {
 
     private String[] lemmas;
 
-    private boolean firstInSentence = false;
-
-    private boolean lastInSentence = false;
-
-    private Integer maximumDistanceFromLastMatch;
-
     private String[] wordTypes;
 
     private String[] flags;
@@ -22,9 +16,13 @@ public class SearchTerm {
 
     private String[] excludeFlags;
 
-    private boolean excludeTerm = false;
+    private boolean invertTerm = false;
 
     private boolean excludedFlagsOrMode;
+
+    private int minOccurences;
+
+    private Integer maxOccurences;
 
     public String getWord() {
         return word;
@@ -40,30 +38,6 @@ public class SearchTerm {
 
     public void setLemmas(String[] lemmas) {
         this.lemmas = lemmas;
-    }
-
-    public boolean isFirstInSentence() {
-        return firstInSentence;
-    }
-
-    public void setFirstInSentence(boolean firstInSentence) {
-        this.firstInSentence = firstInSentence;
-    }
-
-    public boolean isLastInSentence() {
-        return lastInSentence;
-    }
-
-    public void setLastInSentence(boolean lastInSentence) {
-        this.lastInSentence = lastInSentence;
-    }
-
-    public Integer getMaximumDistanceFromLastMatch() {
-        return maximumDistanceFromLastMatch;
-    }
-
-    public void setMaximumDistanceFromLastMatch(Integer maximumDistanceFromLastMatch) {
-        this.maximumDistanceFromLastMatch = maximumDistanceFromLastMatch;
     }
 
     public String[] getWordTypes() {
@@ -106,19 +80,35 @@ public class SearchTerm {
         this.excludeFlags = excludeFlags;
     }
 
-    public boolean isExcludeTerm() {
-        return excludeTerm;
-    }
-
-    public void setExcludeTerm(boolean excludeTerm) {
-        this.excludeTerm = excludeTerm;
-    }
-
     public boolean isExcludedFlagsOrMode() {
         return excludedFlagsOrMode;
     }
 
     public void setExcludedFlagsOrMode(boolean excludedFlagsOrMode) {
         this.excludedFlagsOrMode = excludedFlagsOrMode;
+    }
+
+    public int getMinOccurences() {
+        return minOccurences;
+    }
+
+    public void setMinOccurences(int minOccurences) {
+        this.minOccurences = minOccurences;
+    }
+
+    public Integer getMaxOccurences() {
+        return maxOccurences;
+    }
+
+    public void setMaxOccurences(Integer maxOccurences) {
+        this.maxOccurences = maxOccurences;
+    }
+
+    public boolean isInvertTerm() {
+        return invertTerm;
+    }
+
+    public void setInvertTerm(boolean invertTerm) {
+        this.invertTerm = invertTerm;
     }
 }
