@@ -1,7 +1,6 @@
 package be.alex.dpc;
 
 import com.google.common.base.Joiner;
-import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 
 import java.util.ArrayList;
@@ -78,12 +77,12 @@ public class RegexSearchPatternBuilder {
 
         if(term.getWordTypeIds() != null) {
             if (term.isInvertTerm()) {
-                regex += "(?!" + Joiner.on('|').join(Bytes.asList(term.getWordTypeIds())) + ")";
+                regex += "(?!" + Joiner.on('|').join(Ints.asList(term.getWordTypeIds())) + ")";
 
                 regex += "\\d+F";
             }
             else {
-                regex += "(" + Joiner.on('|').join(Bytes.asList(term.getWordTypeIds())) + ")" + "F";
+                regex += "(" + Joiner.on('|').join(Ints.asList(term.getWordTypeIds())) + ")" + "F";
             }
 
         }
@@ -108,8 +107,8 @@ public class RegexSearchPatternBuilder {
         return regex;
     }
 
-    private String buildFlagSearch(byte[] flagIds, boolean orMode, boolean inverted) {
-        List<String> flagsWithDelimiter = appendToAll(Bytes.asList(flagIds), "D");
+    private String buildFlagSearch(int[] flagIds, boolean orMode, boolean inverted) {
+        List<String> flagsWithDelimiter = appendToAll(Ints.asList(flagIds), "D");
 
         String regex = "";
 

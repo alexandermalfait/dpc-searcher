@@ -5,8 +5,8 @@ import be.alex.dpc.*
 
 abstract class GroovySearchTest extends GroovyTestCase {
 
-	byte nounType
-	byte verbType
+	int nounType
+	int verbType
 
 	List<SearchTermUsingIds> terms
 
@@ -19,15 +19,15 @@ abstract class GroovySearchTest extends GroovyTestCase {
 
 	Map<String, Integer> wordStrings
 
-	Map<String, Byte> types = [
-        "undefined": (byte) 0, "noun": (byte) 1, "verb": (byte) 11, "article": (byte) 12,
-        "dot": (byte) 6, vg: (byte) 7, aanw: (byte) 8, vz: (byte) 9
+	Map<String, Integer> types = [
+        "undefined": (int) 0, "noun": (int) 1, "verb": (int) 11, "article": (int) 12,
+        "dot": (int) 6, vg: (int) 7, aanw: (int) 8, vz: (int) 9
     ]
 
-	Map<String, Byte> flags = [
-        "properName": (byte) 1, "pastParticiple": (byte) 11, "flag3": (byte) 12, "flag4": (byte) 13,
-        "pv": (byte) 20, "tgw": (byte) 21, "mv": (byte) 22, "soort": (byte) 23, "basis": (byte) 24,
-        pron: (byte) 25, stan: (byte) 26, vol: (byte) 27
+	Map<String, Integer> flags = [
+        "properName": (int) 1, "pastParticiple": (int) 11, "flag3": (int) 12, "flag4": (int) 13,
+        "pv": (int) 20, "tgw": (int) 21, "mv": (int) 22, "soort": (int) 23, "basis": (int) 24,
+        pron: (int) 25, stan: (int) 26, vol: (int) 27
     ]
 
 	SearchResult lastResult
@@ -115,7 +115,7 @@ abstract class GroovySearchTest extends GroovyTestCase {
 		}
 
 		if(term.wordTypeIds) {
-			parts << "type = " + term.wordTypeIds.collect { formatType((byte) it) }.join('|')
+			parts << "type = " + term.wordTypeIds.collect { formatType((int) it) }.join('|')
 		}
 
 		if(term.invertTerm) {
@@ -143,7 +143,7 @@ abstract class GroovySearchTest extends GroovyTestCase {
 		return wordStrings.keySet().find { wordStrings[it] == wordId }
 	}
 
-	String formatType(byte wordTypeId) {
+	String formatType(int wordTypeId) {
 		return types.keySet().find { types[it] == wordTypeId }
 	}
 
@@ -163,7 +163,7 @@ abstract class GroovySearchTest extends GroovyTestCase {
 		return sentence(shouldMatch, sentenceString.split(" ").collect { word(it) } as Word[])
 	}
 
-	Word word(String word, byte type = 0, byte... flags) {
+	Word word(String word, int type = 0, int... flags) {
         Arrays.sort(flags, 0, flags.length)
 
 		return new Word(wordId: getWordId(word), wordTypeId: type, flags: flags)
@@ -191,17 +191,17 @@ abstract class GroovySearchTest extends GroovyTestCase {
 		wordStrings[word]
 	}
 
-    byte getWordTypeId(String wordType) {
+    int getWordTypeId(String wordType) {
         if(!types[wordType]) {
-            types[wordType] = (byte) ( (types.values().max() ?: 0) + 1 )
+            types[wordType] = (int) ( (types.values().max() ?: 0) + 1 )
         }
 
         types[wordType]
     }
 
-    byte getFlagId(String flagName) {
+    int getFlagId(String flagName) {
         if(!flags[flagName]) {
-            flags[flagName] = (byte) (  (flags.values().max() ?: 0) + 1 )
+            flags[flagName] = (int) (  (flags.values().max() ?: 0) + 1 )
         }
         
         flags[flagName]

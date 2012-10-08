@@ -11,26 +11,33 @@ public class SearchTest {
     public static void main(String[] args) throws IOException {
         SearchService searcher = new SearchService();
 
-        searcher.readData("data.txt");
+        searcher.setDataLocation("data");
+
         searcher.setProgressFileLocation("progress.txt");
 
         Search search = new Search();
 
+        /*search.getLanguages().add("NL-NL");
+        search.getLanguages().add("NL-BE");*/
+        search.getLanguages().add("EN-UK");
+        /*search.getLanguages().add("FR-BE");
+        search.getLanguages().add("FR-FR");
+        search.getLanguages().add("EN-US");
+        search.getLanguages().add("NL");*/
+
         {
             SearchTerm term = new SearchTerm();
-            term.setLemmas(new String[] { "vragen" });
             search.addTerm(term);
         }
 
         {
             SearchTerm term = new SearchTerm();
-            term.setWordTypes(new String[] { "ww"});
+            term.setWordTypes(new String[] {"TO"});
             search.addTerm(term);
         }
 
         {
             SearchTerm term = new SearchTerm();
-            term.setWord("dat");
             search.addTerm(term);
         }
 

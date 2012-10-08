@@ -35,30 +35,36 @@ public class Database {
     }
 
     @SuppressWarnings({"ConstantConditions"})
-    public Map<Long, Word[]> readDatabase(int limit) {
+    public Map<Long, Word[]> readDatabase(int limit, String documentLanguage) {
         logger.info("Fetching data from db...");
 
         try {
             connection.createStatement().execute("SET enable_seqscan = off;");
             connection.createStatement().execute("SET enable_sort = off;");
             
-            Statement statement = connection.createStatement();
-            statement.setFetchSize(10000);
-
             String query =
                 "SELECT " +
                     "word.sentence_id AS sentence_id, " +
                     "word.id AS word_id, word.word_id AS word_word_id, word.lemma_id AS word_lemma_id, word.word_type_id AS word_type_id, " +
                     "word_flag.flag_id AS flag_id " +
                 "FROM word " +
+                "INNER JOIN sentence ON word.sentence_id = sentence.id " +
+                "INNER JOIN document ON sentence.document_id = document.id " +
                 "LEFT JOIN word_flag ON word.id = word_flag.word_id " +
+                "WHERE document.language = ? " +
                 "ORDER BY sentence_id, word.position ";
 
             if(limit > 0) {
                 query += "LIMIT " + limit;
             }
 
-            ResultSet rs = statement.executeQuery(query);
+            PreparedStatement statement = connection.prepareStatement(query);
+
+            statement.setString(1, documentLanguage);
+
+            statement.setFetchSize(10000);
+
+            ResultSet rs = statement.executeQuery();
 
             Map<Long, Word[]> wordsPerSentence = new HashMap<Long, Word[]>();
 
@@ -74,7 +80,7 @@ public class Database {
 
             List<Word> words = null;
 
-            List<Byte> flags = new ArrayList<Byte>();
+            List<Integer> flags = new ArrayList<Integer>();
 
             while(rs.next()) {
                 long sentenceId = rs.getLong("sentence_id");
@@ -95,7 +101,7 @@ public class Database {
 
                 if(wordId != lastWordId) {
                     if(word != null) {
-                        byte[] flagsArray = new byte[flags.size()];
+                        int[] flagsArray = new int[flags.size()];
 
                         for(int f = 0; f < flags.size(); f++) {
                             flagsArray[f] = flags.get(f);
@@ -108,17 +114,16 @@ public class Database {
 
                     word.setWordId(rs.getInt("word_word_id"));
                     word.setLemmaId(rs.getInt("word_lemma_id"));
-                    word.setWordTypeId(rs.getByte("word_type_id"));
+                    word.setWordTypeId(rs.getInt("word_type_id"));
 
                     words.add(word);
 
                     lastWordId = wordId;
 
-                    flags = new ArrayList<Byte>();
+                    flags = new ArrayList<Integer>();
                 }
 
-                Byte flag = rs.getByte("flag_id");
-
+                int flag = rs.getInt("flag_id");
 
                 if(flag > 0) {
                     flags.add(flag);
@@ -185,12 +190,12 @@ public class Database {
         return (int) findIdByQuery("SELECT id FROM lemma WHERE lemma = ?", lemma.toLowerCase());
     }
 
-    public byte getFlagId(String flag) {
-        return (byte) findIdByQuery("SELECT id FROM flag WHERE name = ?", flag.toLowerCase());
+    public int getFlagId(String flag) {
+        return (int) findIdByQuery("SELECT id FROM flag WHERE name = ?", flag.toLowerCase());
     }
 
-    public byte getWordTypeId(String type) {
-        return (byte) findIdByQuery("SELECT id FROM word_type WHERE name = ?", type.toLowerCase());
+    public int getWordTypeId(String type) {
+        return (int) findIdByQuery("SELECT id FROM word_type WHERE name = ?", type.toLowerCase());
     }
 
     public int[] getWordIdsUsingRegex(String regex) {
@@ -262,6 +267,23 @@ public class Database {
             connection.commit();
         }
         catch(SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<String> getAllDocumentLanguages() {
+        try {
+            List<String> languages = new ArrayList<String>();
+
+            ResultSet resultSet = connection.prepareStatement("SELECT DISTINCT language FROM document").executeQuery();
+
+            while (resultSet.next()) {
+                languages.add(resultSet.getString("language"));
+            }
+
+            return languages;
+        }
+        catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }

@@ -8,9 +8,9 @@ public class Word implements Serializable {
 
     private int lemmaId;
 
-    private byte wordTypeId;
+    private int wordTypeId;
 
-    private byte[] flags;
+    private int[] flags;
 
     public int getWordId() {
         return wordId;
@@ -28,19 +28,19 @@ public class Word implements Serializable {
         this.lemmaId = lemmaId;
     }
 
-    public byte getWordTypeId() {
+    public int getWordTypeId() {
         return wordTypeId;
     }
 
-    public void setWordTypeId(byte wordTypeId) {
+    public void setWordTypeId(int wordTypeId) {
         this.wordTypeId = wordTypeId;
     }
 
-    public byte[] getFlags() {
+    public int[] getFlags() {
         return flags;
     }
 
-    public void setFlags(byte[] flags) {
+    public void setFlags(int[] flags) {
         this.flags = flags;
     }
 }

@@ -5,11 +5,11 @@ public class SearchTermUsingIds {
 
     private int[] lemmaIds;
 
-    private byte[] wordTypeIds;
+    private int[] wordTypeIds;
 
-    private byte[] flagIds;
+    private int[] flagIds;
 
-    private byte[] excludeFlagIds;
+    private int[] excludeFlagIds;
 
     private boolean excludeFlagsOrMode = false;
 
@@ -37,19 +37,19 @@ public class SearchTermUsingIds {
         this.lemmaIds = lemmaIds;
     }
 
-    public byte[] getWordTypeIds() {
+    public int[] getWordTypeIds() {
         return wordTypeIds;
     }
 
-    public void setWordTypeIds(byte[] wordTypeIds) {
+    public void setWordTypeIds(int[] wordTypeIds) {
         this.wordTypeIds = wordTypeIds;
     }
 
-    public byte[] getFlagIds() {
+    public int[] getFlagIds() {
         return flagIds;
     }
 
-    public void setFlagIds(byte[] flagIds) {
+    public void setFlagIds(int[] flagIds) {
         this.flagIds = flagIds;
     }
 
@@ -61,11 +61,11 @@ public class SearchTermUsingIds {
         this.flagsOrMode = flagsOrMode;
     }
 
-    public byte[] getExcludeFlagIds() {
+    public int[] getExcludeFlagIds() {
         return excludeFlagIds;
     }
 
-    public void setExcludeFlagIds(byte[] excludeFlagIds) {
+    public void setExcludeFlagIds(int[] excludeFlagIds) {
         this.excludeFlagIds = excludeFlagIds;
     }
 

@@ -37,7 +37,7 @@ public class SearchTermConvertor {
 
     private void lookupWordTypes(SearchTerm term, SearchTermUsingIds convertedTerm) {
         if(term.getWordTypes() != null) {
-            byte[] wordTypeIds = new byte[term.getWordTypes().length];
+            int[] wordTypeIds = new int[term.getWordTypes().length];
 
             for(int w = 0; w < term.getWordTypes().length; w++) {
                 wordTypeIds[w] = database.getWordTypeId(term.getWordTypes()[w]);
@@ -49,7 +49,7 @@ public class SearchTermConvertor {
 
     private void lookupExcludeFlags(SearchTerm term, SearchTermUsingIds convertedTerm) {
         if(term.getExcludeFlags() != null) {
-            byte[] flagIds = new byte[term.getExcludeFlags().length];
+            int[] flagIds = new int[term.getExcludeFlags().length];
 
             for(int f = 0; f < term.getExcludeFlags().length; f++) {
                 flagIds[f] = database.getFlagId(term.getExcludeFlags()[f]);
@@ -63,7 +63,7 @@ public class SearchTermConvertor {
 
     private void lookupFlags(SearchTerm term, SearchTermUsingIds convertedTerm) {
         if(term.getFlags() != null) {
-            byte[] flagIds = new byte[term.getFlags().length];
+            int[] flagIds = new int[term.getFlags().length];
 
             for(int f = 0; f < term.getFlags().length; f++) {
                 flagIds[f] = database.getFlagId(term.getFlags()[f]);
@@ -106,6 +106,8 @@ public class SearchTermConvertor {
         convertedTerm.setExcludeFlagsOrMode(term.isExcludedFlagsOrMode());
         convertedTerm.setMinOccurrences(term.getMinOccurrences());
         convertedTerm.setMaxOccurrences(term.getMaxOccurrences());
+
+        convertedTerm.setWordTypeIds(term.getWordTypeIds());
     }
 
 }

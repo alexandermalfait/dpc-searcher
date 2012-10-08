@@ -1,6 +1,6 @@
 package be.alex.dpc;
 
-import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Ints;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -24,15 +24,15 @@ public class SentenceDumper {
             writer.write("F");
             writer.write(String.valueOf(word.getLemmaId()));
             writer.write("F");
-            writer.write(String.valueOf((int) word.getWordTypeId()));
+            writer.write(String.valueOf(word.getWordTypeId()));
             writer.write("F");
 
-            List<Byte> flagList = Bytes.asList(word.getFlags());
+            List<Integer> flagList = Ints.asList(word.getFlags());
 
             Collections.sort(flagList);
             
-            for(byte flag : flagList) {
-                writer.write(String.valueOf((int) flag));
+            for(int flag : flagList) {
+                writer.write(String.valueOf(flag));
                 writer.write("D");
             }
 

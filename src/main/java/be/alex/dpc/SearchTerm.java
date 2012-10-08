@@ -10,6 +10,8 @@ public class SearchTerm {
 
     private String[] wordTypes;
 
+    private int[] wordTypeIds;
+
     private String[] flags;
 
     private boolean flagsOrMode;
@@ -110,5 +112,13 @@ public class SearchTerm {
 
     public void setInvertTerm(boolean invertTerm) {
         this.invertTerm = invertTerm;
+    }
+
+    public int[] getWordTypeIds() {
+        return wordTypeIds;
+    }
+
+    public void setWordTypeIds(int[] wordTypeIds) {
+        this.wordTypeIds = wordTypeIds;
     }
 }
