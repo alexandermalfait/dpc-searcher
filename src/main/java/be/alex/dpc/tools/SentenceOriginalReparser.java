@@ -40,7 +40,7 @@ public class SentenceOriginalReparser {
     }
 
     public void reparseOriginals() throws JDOMException, IOException, JaxenException {
-        database = new Database();
+        database = new Database(null);
 
         for(File subFolder : folder.listFiles(new FileFilter() {
             @Override

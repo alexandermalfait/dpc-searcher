@@ -14,11 +14,14 @@ import java.util.logging.Logger;
 
 public class Database {
 
+    private final DatabaseConfig config;
     private Logger logger = Logger.getLogger("DatabaseReader");
 
     private Connection connection;
 
-    public Database() {
+    public Database(DatabaseConfig databaseConfig) {
+        config = databaseConfig;
+
         connect();
     }
 
@@ -26,7 +29,10 @@ public class Database {
         try {
             logger.info("Connecting to database");
 
-            connection = DriverManager.getConnection("jdbc:postgresql:dpc", "postgres", "olifant");
+            connection = DriverManager.getConnection(
+                "jdbc:postgresql:" + config.getHost() +"/" + config.getDatabase(), config.getUser(), config.getPassword()
+            );
+
             connection.setAutoCommit(false);
         }
         catch(SQLException e) {
@@ -286,5 +292,9 @@ public class Database {
         catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void dispose() throws SQLException {
+        connection.close();
     }
 }

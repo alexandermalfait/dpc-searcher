@@ -30,7 +30,7 @@ public class FullSentenceDumper {
     }
 
     private void dumpSentences() throws IOException {
-        database = new Database();
+        database = new Database(null);
 
         List<String> languages = database.getAllDocumentLanguages();
 

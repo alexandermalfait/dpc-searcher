@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -22,6 +23,8 @@ public class SearchService {
 
     private String dataLocation;
 
+    private DatabaseConfig databaseConfig;
+
     public SearchResult runSearch(Search search) throws IOException {
         final List<String> lines = new ArrayList<String>();
 
@@ -33,18 +36,29 @@ public class SearchService {
             lines.addAll(readData(fileName));
         }
 
-        RegexSearchExecutor executor = new RegexSearchExecutor(lines, search, new Database());
+        Database database = new Database(databaseConfig);
 
-        if (progressFileLocation != null) {
-            executor.addPropertyChangeListener("progress", new PropertyChangeListener() {
-                @Override
-                public void propertyChange(PropertyChangeEvent evt) {
-                    writeProgress((Integer) evt.getNewValue(), lines.size());
-                }
-            });
+        try {
+            RegexSearchExecutor executor = new RegexSearchExecutor(lines, search, database);
+
+            if (progressFileLocation != null) {
+                executor.addPropertyChangeListener("progress", new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        writeProgress((Integer) evt.getNewValue(), lines.size());
+                    }
+                });
+            }
+
+            return executor.getSearchResult();
         }
-
-        return executor.getSearchResult();
+        finally {
+            try {
+                database.dispose();
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, e.getMessage(), e);
+            }
+        }
     }
 
     @SuppressWarnings("NestedAssignment")
@@ -87,6 +101,14 @@ public class SearchService {
 
     public void setDataLocation(String dataLocation) {
         this.dataLocation = dataLocation;
+    }
+
+    public DatabaseConfig getDatabaseConfig() {
+        return databaseConfig;
+    }
+
+    public void setDatabaseConfig(DatabaseConfig databaseConfig) {
+        this.databaseConfig = databaseConfig;
     }
 }
 
