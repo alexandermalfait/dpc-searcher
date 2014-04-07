@@ -30,7 +30,7 @@ public class Database {
             logger.info("Connecting to database");
 
             connection = DriverManager.getConnection(
-                "jdbc:postgresql:" + config.getHost() +"/" + config.getDatabase(), config.getUser(), config.getPassword()
+                "jdbc:postgresql://" + config.getHost() + "/" + config.getDatabase(), config.getUser(), config.getPassword()
             );
 
             connection.setAutoCommit(false);
